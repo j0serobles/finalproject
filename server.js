@@ -8,10 +8,14 @@ const users = require('./routes/api/users');
 const app = express();
 const port = process.env.PORT || 5000;
 
+if(process.env.NODE_ENV === "production") {
+    app.use(express.static("client/build")); 
+}
+
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
-const db = require("./config/keys").mongoURI;
+const db = process.env.MONGODB_URI || require("./config/keys").mongoURI;
 mongoose.connect(db, { useNewUrlParser: true }).then(() => console.log("MongoDB connected")).catch((err) => console.log(err));
 
 app.use(passport.initialize());
