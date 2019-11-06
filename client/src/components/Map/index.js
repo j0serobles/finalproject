@@ -386,136 +386,132 @@ render(){
 const AsyncMap = withScriptjs(
    withGoogleMap(
     props => (
-
-    <GoogleMap google={this.props.google}
-      defaultZoom={this.props.zoom}
-      defaultCenter={{ lat: this.state.mapPosition.lat, lng: this.state.mapPosition.lng }}
-     >
-
-     <div className="input-group mt-3 mb-3">
-       <div className="input-group-prepend">
-         <span className="input-group-text" id="origLocation">Pick-Up Location:</span>
-       </div>        
-       {/* For Autocomplete Search Box for origin location */}
-      <Autocomplete
-        type="text" 
-        className="form-control"
-        aria-label="origLocation" 
-        aria-describedby="origLocation"
-        defaultValue = { this.state.origAddress.address }
-        placeholder = "Enter pick-up location"
-        onPlaceSelected={ this.onOrigPlaceSelected }
-        types={['geocode']}
-      />
-    </div>
- 
-    <div className="input-group mb-3">
-      <div className="input-group-prepend">
-        <span className="input-group-text" id="destLocation">Delivery Location:</span>
-      </div>
-      {/* For Autocomplete Search Box for destination */}
-      <Autocomplete
-        type="text" 
-        className="form-control" 
-        aria-label="destLocation" 
-        aria-describedby="destLocation"
-       defaultValue = { this.state.destAddress.address }
-       onPlaceSelected={ this.onDestPlaceSelected }
-       types={['geocode']}
-      />
-    </div>
-      
-
+      <GoogleMap google={this.props.google}
+          defaultZoom={this.props.zoom}
+          defaultCenter={{ lat: this.state.mapPosition.lat, lng: this.state.mapPosition.lng }}
+      >
       {/* Origin Marker -- Visible when pick-up address is known */}
       {  this.state.origMarkerPosition.lat && 
-        <Marker 
-          google={this.props.google}
-          name={'origin'}
-          draggable={true}
-          onDragEnd={ this.onOrigMarkerDragEnd }
-          position={{ lat: this.state.origMarkerPosition.lat, lng: this.state.origMarkerPosition.lng }} 
-          icon="http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
-        />
+      <Marker 
+        google={this.props.google}
+        name={'origin'}
+        draggable={true}
+        onDragEnd={ this.onOrigMarkerDragEnd }
+        position={{ lat: this.state.origMarkerPosition.lat, lng: this.state.origMarkerPosition.lng }} 
+        icon="http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
+      />
       }
 
       {/*Destination Marker -- Visible when delivery address is known */}
       { this.state.destMarkerPosition && 
-        <Marker 
-          google={this.props.google}
-          name={'destination'}
-          draggable={true}
-          onDragEnd={ this.onDestMarkerDragEnd }
-          position={{ lat: this.state.destMarkerPosition.lat, lng: this.state.destMarkerPosition.lng }}
-        />
-      }
-
-      {/* Render the Directions iff both orig and dest positions are set */}
-      { this.state.origMarkerPosition.lat &&  this.state.destMarkerPosition.lat &&
-      <DirectionRendererComponent
-              index={1} 
-              key={1}
-              strokeColor="#0000FF" 
-              from=
-              {
-                     { lat  : this.state.origMarkerPosition.lat,
-                       lng  : this.state.origMarkerPosition.lng, 
-                       title: "Pick-Up Location" 
-                      }
-              }
-              to=
-              {
-                     { lat   : this.state.destMarkerPosition.lat,
-                       lng   : this.state.destMarkerPosition.lng,
-                       title : "Drop-Off Location"
-                     }
-              }
+      <Marker 
+        google={this.props.google}
+        name={'destination'}
+        draggable={true}
+        onDragEnd={ this.onDestMarkerDragEnd }
+        position={{ lat: this.state.destMarkerPosition.lat, lng: this.state.destMarkerPosition.lng }}
       />
       }
 
-      {/* InfoWindow on top of destination marker */}
-      {/*
-      <InfoWindow
-         onClose={this.onInfoWindowClose}
-         position={{ lat: ( this.state.origMarkerPosition.lat + 0.0018 ), lng: this.state.origMarkerPosition.lng }}
-      >
-        <div>
-          <span style={{ padding: 0, margin: 0 }}>Pick-Up</span>
-        </div>
-      </InfoWindow>
+    {/* Render the Directions iff both orig and dest positions are set */}
+    { this.state.origMarkerPosition.lat &&  this.state.destMarkerPosition.lat &&
+    <DirectionRendererComponent
+            index={1} 
+            key={1}
+            strokeColor="#0000FF" 
+            from=
+            {
+                  { lat  : this.state.origMarkerPosition.lat,
+                    lng  : this.state.origMarkerPosition.lng, 
+                    title: "Pick-Up Location" 
+                    }
+            }
+            to=
+            {
+                  { lat   : this.state.destMarkerPosition.lat,
+                    lng   : this.state.destMarkerPosition.lng,
+                    title : "Drop-Off Location"
+                  }
+            }
+    />
+    }
 
-     <InfoWindow
-         onClose={this.onInfoWindowClose}
-         position={{ lat: ( this.state.destMarkerPosition.lat + 0.0018 ), lng: this.state.destMarkerPosition.lng }}
-      >
-        <div>
-          <span style={{ padding: 0, margin: 0 }}>Delivery</span>
-        </div>
-     </InfoWindow> */}
-      
-    </GoogleMap>
+    <div className="input-group mt-3 mb-3">
+      <div className="input-group-prepend">
+          <span className="input-group-text" id="origLocation">Pick-Up Location:</span>
+       </div>        
+      {/* For Autocomplete Search Box for origin location */}
+      <Autocomplete
+      type="text" 
+      className="form-control"
+      aria-label="origLocation" 
+      aria-describedby="origLocation"
+      defaultValue = { this.state.origAddress.address }
+      placeholder = "Enter pick-up location"
+      onPlaceSelected={ this.onOrigPlaceSelected }
+      types={['geocode']}
+      />
+    </div>
+
+    <div className="input-group mb-3">
+      <div className="input-group-prepend">
+        <span className="input-group-text" id="destLocation">Delivery Location:</span>
+      </div>
+    {/* For Autocomplete Search Box for destination */}
+    <Autocomplete
+    type="text" 
+    className="form-control" 
+    aria-label="destLocation" 
+    aria-describedby="destLocation"
+    defaultValue = { this.state.destAddress.address }
+    onPlaceSelected={ this.onDestPlaceSelected }
+    types={['geocode']}
+    />
+    </div>
+
+        {/* InfoWindow on top of destination marker */}
+        {/*
+        <InfoWindow
+          onClose={this.onInfoWindowClose}
+          position={{ lat: ( this.state.origMarkerPosition.lat + 0.0018 ), lng: this.state.origMarkerPosition.lng }}
+        >
+          <div>
+            <span style={{ padding: 0, margin: 0 }}>Pick-Up</span>
+          </div>
+        </InfoWindow>
+
+        <InfoWindow
+          onClose={this.onInfoWindowClose}
+          position={{ lat: ( this.state.destMarkerPosition.lat + 0.0018 ), lng: this.state.destMarkerPosition.lng }}
+        >
+          <div>
+            <span style={{ padding: 0, margin: 0 }}>Delivery</span>
+          </div>
+        </InfoWindow> */}   
+      </GoogleMap>
     )
   )
 );
 
 let map;
   if( this.props.center.lat !== undefined ) {
-   map = <div>
-     
+   map = 
+   <div>
      <AsyncMap
-
-        googleMapURL={googleMapsURL}
-        loadingElement={
-        <div style={{ height: `100%` }} />
-        }
-        containerElement={
-        <div style={{ height: this.props.height }} />
-        }
-        mapElement={
-        <div style={{ height: `100%` }} />
-        }
-     />
-     
+       googleMapURL={googleMapsURL}
+       loadingElement={
+       <div style={{ height: `100%` }} />
+       }
+       containerElement={
+       <div style={{ height: this.props.height }} />
+       }
+       mapElement={
+       <div style={{ height: `100%` }} />
+       }
+    />
+    
     </div>
+    
 } else {
    map = <div style={{height: this.props.height}} />
   }

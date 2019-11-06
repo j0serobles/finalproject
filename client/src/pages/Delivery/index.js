@@ -85,55 +85,65 @@ class Delivery extends React.Component {
                       <div>Geolocation is not enabled</div>
                 ) :   this.props.coords ? ( 
                      <div className="container">
-
-                     <Map
-                       google={this.props.google}
-                       center={
-                         { lat : this.props.coords.latitude, 
-                           lng : this.props.coords.longitude
-                         }
-                       }
-                       height='300px'
-                       zoom={15}
-                       handleAddressChange={this.handleAddressChange}
-                     /> 
-                     <Form id="deliveryRequestForm">
-                        <FormGroup row>
-                          <Col>
-                            <InputGroup >
-                              <InputGroupAddon addonType="prepend">Amount</InputGroupAddon>
-                              <Input type="text" 
-                                     value={this.state.itemCount} 
-                                     onChange={this.handleInputChange}
-                                     name="itemCount"
-                                     />
-                            </InputGroup>
+                       <Row>
+                         <Col sm={12}>
+                            <Map
+                              google={this.props.google}
+                              center={
+                                { lat : this.props.coords.latitude, 
+                                  lng : this.props.coords.longitude
+                                }
+                              }
+                              height='20em'
+                              zoom={15}
+                              handleAddressChange={this.handleAddressChange}
+                            />
                           </Col>
-                          <Col>
-                              <AppAutocomplete 
-                                label="Description" 
-                                suggestions={['Jewlery Boxes','Grocery Bags', 'Shopping Bags' , 'Letters', 'Envelopes', 'Small Boxes', 'Medium Boxes', 'Large Boxes']}
-                                name="itemDesc"
-                                value={this.state.itemDesc}
-                                handleOnClick={this.handleAutocompleteOnClick}
-                              />
-                          </Col>
-                          <Col>
-                            <InputGroup >
-                              <InputGroupAddon addonType="prepend">Aprox. Weight (each)</InputGroupAddon>
-                              <Input type="text"
-                                     value={this.state.itemWeight}
-                                     name="itemWeight"
-                                     onChange={this.handleInputChange}
-                              />
-                              <InputGroupAddon addonType="append">
-                                <AppDropdown items={['lbs','kg', 'gm', 'oz','lt']} />
-                              </InputGroupAddon>
-                            </InputGroup>
-                          </Col>
-                        </FormGroup>
-                        <Button type="submit" onClick={(event) => this.submitDeliveryRequest(event)}>Submit Request</Button>
-                      </Form>
+                        </Row>
+                        <Row id="deliveryRequestForm">
+                         <Col sm={12}>
+                            <Form>
+                                <FormGroup row>
+                                  <Col>
+                                    <InputGroup >
+                                      <InputGroupAddon addonType="prepend">Amount</InputGroupAddon>
+                                      <Input type="text" 
+                                            value={this.state.itemCount} 
+                                            onChange={this.handleInputChange}
+                                            name="itemCount"
+                                            />
+                                    </InputGroup>
+                                  </Col>
+                                  <Col>
+                                      <AppAutocomplete 
+                                        label="Description" 
+                                        suggestions={['Jewlery Boxes','Grocery Bags', 'Shopping Bags' , 'Letters', 'Envelopes', 'Small Boxes', 'Medium Boxes', 'Large Boxes']}
+                                        name="itemDesc"
+                                        value={this.state.itemDesc}
+                                        handleOnClick={this.handleAutocompleteOnClick}
+                                      />
+                                  </Col>
+                                  <Col>
+                                    <InputGroup >
+                                      <InputGroupAddon addonType="prepend">Aprox. Weight (each)</InputGroupAddon>
+                                      <Input type="text"
+                                            value={this.state.itemWeight}
+                                            name="itemWeight"
+                                            onChange={this.handleInputChange}
+                                      />
+                                      <InputGroupAddon addonType="append">
+                                        <AppDropdown items={['lbs','kg', 'gm', 'oz','lt']} />
+                                      </InputGroupAddon>
+                                    </InputGroup>
+                                  </Col>
+                                </FormGroup>
+                                <Button 
+                                  color="primary"
+                                  type="submit" 
+                                  onClick={(event) => this.submitDeliveryRequest(event)}>Submit Request</Button>
+                              </Form>
+                              </Col>
+                              </Row>
                       <this.DeliveryRequestDialog/>
                       </div>
                 ) : (
