@@ -11,7 +11,11 @@ const DeliverySchema = new Schema({
         required: false
     },
     origLocationID: {
-        type: Number,
+        type: String,
+        required: true
+    },
+    destLocationID: {
+        type: String,
         required: true
     },
     status: {
@@ -46,7 +50,11 @@ const DeliverySchema = new Schema({
         type : Number,
         required: true
     },
-    duration : {
+    estimatedDuration : {
+        type : Number,
+        required: true
+    },
+    actualDuration : {
         type : Number,
         required: true
     },

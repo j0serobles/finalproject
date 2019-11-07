@@ -9,6 +9,7 @@ const validateLoginInput = require('../../validation/login');
 
 const User = require('../../models/User');
 
+//Matches api/users/register
 router.post('/register', (req, res) => {
     const { errors, isValid } = validateRegisterInput(req.body);
 
@@ -38,6 +39,7 @@ router.post('/register', (req, res) => {
     });
 });
 
+//Matches api/users/login
 router.post('/login', (req, res) => {
     const { errors, isValid } = validateLoginInput(req.body);
 

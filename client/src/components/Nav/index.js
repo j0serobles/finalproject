@@ -27,18 +27,18 @@ function Nav() {
         </li>
         <li className="nav-item">
           <NavLink
-            to="/discover"
-            className="nav-link"
-          >
-            Discover
-          </NavLink>
-        </li>
-        <li className="nav-item">
-          <NavLink
             to="/search"
             className="nav-link"
           >
             Search
+          </NavLink>
+        </li>
+        <li className="nav-item">
+          <NavLink
+            to="/logout"
+            className="nav-link"
+          >
+            Log Out
           </NavLink>
         </li>
       </ul>
