@@ -1,10 +1,11 @@
-import { SET_LIST_FILTER , GET_DELIVERIES } from '../actions/types';
+import { SET_LIST_FILTER , GET_DELIVERIES, DATA_LOADING } from '../actions/types';
 
 const isEmpty = require('is-empty');
 
 const initialState = {
     deliveries : [],
-    filterValue : ""
+    filterValue : "",
+    isLoading   : false
 }
 
 export default function(state = initialState, action){
@@ -20,6 +21,11 @@ export default function(state = initialState, action){
                 ...state,
                 deliveries: action.payload
             };
+        case DATA_LOADING:
+          return {
+            ...state,
+            loading: action.payload
+        };
         default:
             return state;
     }
