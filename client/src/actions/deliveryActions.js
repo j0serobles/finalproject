@@ -2,7 +2,6 @@ import axios from 'axios';
 import setAuthToken from '../utility/setAuthToken';
 import jwt_decode from 'jwt-decode';
 import {  SET_LIST_FILTER , GET_DELIVERIES, DATA_LOADING } from './types';
-import { bindActionCreators } from 'C:/Users/joserobles/AppData/Local/Microsoft/TypeScript/3.6/node_modules/redux';
 
 export const setDataLoading = (isLoading) => {
     return {
