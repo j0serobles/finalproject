@@ -14,4 +14,10 @@ router
   .put(deliveryController.update)
   .delete(deliveryController.remove);
 
+// Matches with "/api/delivery/status/:status"
+router
+.route("/status/:status")
+.get(deliveryController.findByStatus);
+
+
 module.exports = router;

@@ -14,7 +14,14 @@ function Nav() {
           <NavLink
             to="/delivery"
             className="nav-link">
-            Deliveries
+            New Delivery
+          </NavLink>
+        </li>
+        <li className="nav-item">
+          <NavLink
+            to="/deliveries"
+            className="nav-link">
+            Delivery List
           </NavLink>
         </li>
         <li className="nav-item">

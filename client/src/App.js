@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import './App.css';
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch, Redirect } from "react-router-dom";
 import jwt_decode from 'jwt-decode';
 import setAuthToken from './utility/setAuthToken';
 import { setCurrentUser, logoutUser } from './actions/authActions';
@@ -11,8 +11,8 @@ import store from './store';
 import Nav          from './components/Nav';
 import Landing      from './pages/Landing';
 import Delivery     from './pages/Delivery';
+import DeliveryList from './components/DeliveryList';
 import About        from './pages/About';
-import Discover     from './pages/Discover';
 import Search       from './pages/Search';
 import Register     from "./components/auth/Register";
 import Login        from "./components/auth/Login";
@@ -48,7 +48,8 @@ function App() {
             <Route exact path="/login"      component={Login}    /> 
             <Route exact path="/logout"     render={ () => { store.dispatch(logoutUser()); window.location.href = "./login" } } />
             <Route exact path="/"           component={Landing}  />
-            <PrivateRoute exact path="/delivery" component={Delivery} />
+            <PrivateRoute exact path="/delivery"   component={Delivery} />
+            <PrivateRoute exact path="/deliveries" component={DeliveryList} />
             <Route component={NoMatch} />
       </Switch>
       </div>

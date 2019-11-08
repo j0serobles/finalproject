@@ -5,13 +5,19 @@ module.exports = {
   findAll: function(req, res) {
     db.Delivery
       .find(req.query)
-      .sort({ date: -1 })
+      .sort({ deliveryDate: -1 })
       .then(dbModel => res.json(dbModel))
       .catch(err => res.status(422).json(err));
   },
   findById: function(req, res) {
     db.Delivery
       .findById(req.params.id)
+      .then(dbModel => res.json(dbModel))
+      .catch(err => res.status(422).json(err));
+  },
+  findByStatus: function(req, res) {
+    db.Delivery
+      .find({ status : req.params.status })
       .then(dbModel => res.json(dbModel))
       .catch(err => res.status(422).json(err));
   },

@@ -26,6 +26,11 @@ const DeliverySchema = new Schema({
         type: Schema.Types.ObjectId,
         required: false
     },
+    itemCount : {
+        type: Number,
+        required: false, 
+        default: 1
+    },
     itemDescription : {
         type: String,
         required: true
@@ -65,7 +70,11 @@ const DeliverySchema = new Schema({
     deliveryDate: {
         type: Date,
         default: Date.now
-    }
+    },
+    notes : {
+        type: String,
+        required: false
+    },
 });
 
 module.exports = Delivery = mongoose.model("Delivery", DeliverySchema);
