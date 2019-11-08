@@ -1,7 +1,6 @@
 import React          from "react";
 import { geolocated } from "react-geolocated";
 import Map            from "../../components/Map";
-import AppAutocomplete   from "../../components/AppAutocomplete";
 import AppDropdown       from "../../components/AppDropdown";
 import Modal             from "../../components/Modal";
 import './style.css';
@@ -21,9 +20,16 @@ class Delivery extends React.Component {
     showModal : false,
     origAddress : "",
     destAddress : "",
-    itemCount   : 0,
+    itemCount   : 1,
     itemDesc    : "",
-    itemWeight  : 0
+    itemWeight  : 0, 
+    errors      : {
+      origAddress : 'Please select a pick-up address.', 
+      destAddress : '', 
+      itemCount   : '', 
+      itemDesc    : 'Please enter a description.', 
+      itemWeight  : 'Please enter an aprox. weight.'
+    }
   }
 
   toggleDialog = () => {
@@ -52,33 +58,52 @@ class Delivery extends React.Component {
   /* Opens a dialog informing user that app is looking for available drivers */
   submitDeliveryRequest = function(event) {
     event.preventDefault();
-    this.setState( {showModal : true}) ; 
+    if (this.validateForm(this.state.errors)) { 
+      this.setState( {showModal : true}) ; 
+    }
   }
 
-  handleInputChange = event => {
-    const name = event.target.name;
-    const value = event.target.value;
-    this.setState({
-      [name]: value
-    });
-  };
+  validateForm = errorsObject => {
+      let valid = true;
+      Object.values(errorsObject).forEach(
+        // if we have an error string set valid to false
+        (val) => val.length > 0 && (valid = false)
+      );
+      return valid;
+    }
 
-  handleAutocompleteOnClick = (itemDesc) => {
-    console.log ("handleAutocompleteOnClick[64]: " + itemDesc);
-    this.setState({
-      itemDesc: itemDesc
-    });
+  handleInputChange = event => {
+    let errors = this.state.errors;
+    const {name, value} = event.target; 
+    console.log ("Handle input change [68]", name , "=", value); 
+    
+    switch (name) { 
+      case 'itemCount'  : errors.itemCount   = (!value || parseInt(value) <= 0) ? 'Please enter 1 or more.' : ''; 
+      break; 
+      case 'itemDesc'   : errors.itemDesc    = (!value || value.length < 2) ? 'Please enter an item description.' : ''; 
+      break; 
+      case 'itemWeight' : errors.itemWeight  = (!value || parseFloat(value) <= 0) ? 'Please enter an aprox. weigth.' : ''; 
+      break;
+      default: 
+      break; 
+    }
+    this.setState({ [name]: value, errors });
   };
 
   handleAddressChange = ( origAddress, destAddress ) => {
     console.log ("handleAddressChange : " + origAddress + " , " + destAddress);
-    this.setState({
-      origAddress : origAddress,
-      destAddress : destAddress
-    });
+    let errors = this.state.errors;
+
+    errors.origAddress = (!origAddress || origAddress.length === 0) ? 'A pickup address is required.'   : '';
+    errors.destAddress = (!destAddress || destAddress.length === 0) ? 'A delivery address is required.' : '';
+
+    this.setState({ origAddress : origAddress, destAddress : destAddress, errors });
   };
 
     render() {
+        
+      const {errors} = this.state;
+
         return  !this.props.isGeolocationAvailable ? (
                     <div>Your browser does not support Geolocation</div>
                 ) : !this.props.isGeolocationEnabled ? (
@@ -97,6 +122,7 @@ class Delivery extends React.Component {
                               height='20em'
                               zoom={15}
                               handleAddressChange={this.handleAddressChange}
+                              errors={errors}
                             />
                           </Col>
                         </Row>
@@ -113,15 +139,18 @@ class Delivery extends React.Component {
                                             name="itemCount"
                                             />
                                     </InputGroup>
+                                    {errors.itemCount.length > 0 && <span className="error">{errors.itemCount}</span>}
                                   </Col>
                                   <Col>
-                                      <AppAutocomplete 
-                                        label="Description" 
-                                        suggestions={['Jewlery Boxes','Grocery Bags', 'Shopping Bags' , 'Letters', 'Envelopes', 'Small Boxes', 'Medium Boxes', 'Large Boxes']}
-                                        name="itemDesc"
-                                        value={this.state.itemDesc}
-                                        handleOnClick={this.handleAutocompleteOnClick}
-                                      />
+                                  <InputGroup >
+                                    <InputGroupAddon addonType="prepend">Description</InputGroupAddon>
+                                    <Input type="text" 
+                                           value={this.state.itemDesc} 
+                                           onChange={this.handleInputChange}
+                                           name="itemDesc"
+                                    />
+                                    </InputGroup>
+                                    {errors.itemDesc.length > 0 && <span className="error">{errors.itemDesc}</span>}
                                   </Col>
                                   <Col>
                                     <InputGroup >
@@ -135,6 +164,7 @@ class Delivery extends React.Component {
                                         <AppDropdown items={['lbs','kg', 'gm', 'oz','lt']} />
                                       </InputGroupAddon>
                                     </InputGroup>
+                                    {errors.itemWeight.length > 0 && <span className="error">{errors.itemWeight}</span>}
                                   </Col>
                                 </FormGroup>
                                 <Button 

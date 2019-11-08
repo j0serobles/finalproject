@@ -185,10 +185,50 @@ class Map extends Component {
   * @param event
   */
  onChange = ( event ) => {
-   console.log ( `onChange[168] event is ${event.target.name}`);
-   console.log ( `onChange[168] event is ${event.target.value}`);
-  this.setState({ [event.target.name]: event.target.value });
+
+   let { name, value } = event.target; 
+   
+   console.log ( `onChange[188] event name is ${name}`);
+   console.log ( `onChange[189] event value is ${value} length is ${value.length}`);
+
+   //The text field was cleared.  Reset the corresponding address attributes.
+  
+     if ( (value.length === 0) && (name === 'origAddress')) {
+       this.setState({ origAddress : {
+                       address: '',
+                       city: '',
+                       area: '',
+                       state: ''
+                     },
+                     origMarkerPosition: {
+                       lat: '',
+                       lng: ''
+                     },
+                     origPlaceId : ''
+                     }
+                     , () => this.props.handleAddressChange(this.state.origAddress.address,this.state.destAddress.address));
+     }
+     else if (value.length === 0 && name === 'destAddress') {
+      this.setState({  destAddress : {
+                        address: '',
+                        city: '',
+                        area: '',
+                        state: ''
+                      },
+                      destMarkerPosition: {
+                        lat: '',
+                        lng: ''
+                      },
+                      destPlaceId : ''
+                    }
+                    , () => this.props.handleAddressChange(this.state.origAddress.address,this.state.destAddress.address));
+     }
+     else {
+      this.setState({ [event.target.name]: event.target.value });   
+     }
+  
  };
+
 /**
   * This Event triggers when the marker window is closed
   *
@@ -202,7 +242,7 @@ class Map extends Component {
   * @param place
   */
  onOrigPlaceSelected = ( place ) => {
-   console.log (`onOrigPlaceSelected: ` + JSON.stringify(place, '', 2));
+   //console.log (`onOrigPlaceSelected: ` + JSON.stringify(place, '', 2));
    const address  = place.formatted_address,
      addressArray =  place.address_components,
      city         = this.getCity( addressArray ),
@@ -403,7 +443,7 @@ const AsyncMap = withScriptjs(
       }
 
       {/*Destination Marker -- Visible when delivery address is known */}
-      { this.state.destMarkerPosition && 
+      { this.state.destMarkerPosition.lat && 
       <Marker 
         google={this.props.google}
         name={'destination'}
@@ -440,34 +480,40 @@ const AsyncMap = withScriptjs(
       <div className="input-group-prepend">
           <span className="input-group-text" id="origLocation">Pick-Up Location:</span>
        </div>        
-      {/* For Autocomplete Search Box for origin location */}
-      <Autocomplete
-      type="text" 
-      className="form-control"
-      aria-label="origLocation" 
-      aria-describedby="origLocation"
-      defaultValue = { this.state.origAddress.address }
-      placeholder = "Enter pick-up location"
-      onPlaceSelected={ this.onOrigPlaceSelected }
-      types={['geocode']}
-      />
+       {/* For Autocomplete Search Box for origin location */}
+       <Autocomplete
+         type="text" 
+         className="form-control"
+         aria-label="origLocation" 
+         aria-describedby="origLocation"
+         name="origAddress"
+         value = { this.state.origAddress.address }
+         onChange = { this.onChange }
+         onPlaceSelected={ this.onOrigPlaceSelected }
+         placeholder={ this.props.errors.origAddress.length > 0 && this.props.errors.origAddress }
+         types={['geocode']}
+       />
     </div>
-
+    
     <div className="input-group mb-3">
       <div className="input-group-prepend">
         <span className="input-group-text" id="destLocation">Delivery Location:</span>
       </div>
-    {/* For Autocomplete Search Box for destination */}
-    <Autocomplete
-    type="text" 
-    className="form-control" 
-    aria-label="destLocation" 
-    aria-describedby="destLocation"
-    defaultValue = { this.state.destAddress.address }
-    onPlaceSelected={ this.onDestPlaceSelected }
-    types={['geocode']}
-    />
+      {/* For Autocomplete Search Box for destination */}
+      <Autocomplete
+        type="text" 
+        className="form-control" 
+        aria-label="destLocation" 
+        aria-describedby="destLocation"
+        name="destAddress"
+        value = { this.state.destAddress.address }
+        onChange= {this.onChange }
+        onPlaceSelected={ this.onDestPlaceSelected }
+        placeholder={ this.props.errors.destAddress.length > 0 && this.props.errors.destAddress}
+        types={['geocode']}
+      />
     </div>
+   
 
         {/* InfoWindow on top of destination marker */}
         {/*

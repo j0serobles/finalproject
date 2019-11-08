@@ -49,15 +49,16 @@ export class AppAutocomplete extends Component {
   };
 
   onKeyDown = e => {
-    const { activeSuggestion, filteredSuggestions } = this.state;
+    const { activeSuggestion, filteredSuggestions, userInput } = this.state;
 
+    const inputText = (!filteredSuggestions[activeSuggestion]) ? userInput : filteredSuggestions[activeSuggestion];  
     if (e.keyCode === 13) {
       e.preventDefault();
       this.setState({
         activeSuggestion: 0,
         showSuggestions: false,
-        userInput: filteredSuggestions[activeSuggestion]
-      }, this.props.handleOnClick(filteredSuggestions[activeSuggestion]));
+        userInput: inputText
+      }, this.props.handleOnClick(inputText));
     } else if (e.keyCode === 38) {
       if (activeSuggestion === 0) {
         return;
@@ -134,6 +135,7 @@ export class AppAutocomplete extends Component {
       </InputGroup>
         
         {suggestionsListComponent}
+
       </React.Fragment>
     );
   }
