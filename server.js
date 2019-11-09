@@ -36,9 +36,10 @@ app.use(routes);
 
 // Send every other request to the React app
 // Define any API routes before this runs
-// Note: For dev environment, you need to run the build, so the file is available.  
+// Note: For dev environment, you need to run the build, so the file is available.
+defaultURL = process.env.NODE_ENV === "production" ?   "./app/build/index.html" : "./client/build/index.html";
 app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "./client/build/index.html"));
+  res.sendFile(path.join(__dirname, defaultURL));
 });
 
 app.listen(port, () => {

@@ -46,7 +46,7 @@ function App() {
             <Route exact path="/search"     component={Search}   />
             <Route exact path="/register"   component={Register} />
             <Route exact path="/login"      component={Login}    /> 
-            <Route exact path="/logout"     render={ () => { store.dispatch(logoutUser()); window.location.href = "/login" } } />
+            <Route exact path="/logout"     render={ () => { store.dispatch(logoutUser()); window.location.href = "./login" } } />
             <Route exact path="/"           component={Landing}  />
             <PrivateRoute exact path="/delivery"   component={Delivery} />
             <PrivateRoute exact path="/deliveries" component={DeliveryList} />
