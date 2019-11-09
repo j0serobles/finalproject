@@ -22,7 +22,6 @@ module.exports = {
       .catch(err => res.status(422).json(err));
   },
   create: function(req, res) {
-    console.log ( " deliveryController.js [19] ");
     db.Delivery
       .create(req.body)
       .then(dbModel => res.json(dbModel))

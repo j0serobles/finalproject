@@ -68,21 +68,22 @@ class Delivery extends React.Component {
         let newDelivery = {
               "origAddress"       : this.state.origAddress,
               "destAddress"       : this.state.destAddress,
-              "origLocationID"    : this.origLocationID, 
-              "destLocationID"    : this.destLocationID, 
+              "origLocationID"    : this.state.origLocationID, 
+              "destLocationID"    : this.state.destLocationID, 
               "status"            : "P", 
-              "itemDescription"   : this.itemDesc,
-              "itemWeight"        : this.itemWeight,
+              "itemDescription"   : this.state.itemDesc,
+              "itemWeight"        : this.state.itemWeight,
               "itemWeightUnits"   : '',
               "itemVolume"        : null, 
               "itemVolUnits"      : '',
               "totalCost"         : "0",
               "estimatedDuration" : "0", 
               "actualDuration"    : "0",
-              "customer"          : ""
-        }
+              "customer"          : "5dae4e815d63d136b0eebfa4"
+        }; 
+        console.log (JSON.stringify(newDelivery, '', 2)); 
         axios.post('/api/delivery', newDelivery)
-        .then( (res) => console.log ('New delivery request saved', res.data))
+        .then( (res) => console.log ('New delivery request saved.', res.data))
         .catch( error => console.log (error) ) ; 
         });
       } 

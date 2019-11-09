@@ -65,7 +65,7 @@ const DeliverySchema = new Schema({
     },
     customer: { 
        type: Schema.Types.ObjectId,
-       required: true
+       required: false
     },
     deliveryDate: {
         type: Date,

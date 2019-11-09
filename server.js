@@ -5,8 +5,6 @@ const passport = require('passport');
 
 const routes = require("./routes");
 
-// const users = require('./routes/api/users');
-
 const app = express();
 const port = process.env.PORT || 5000;
 
@@ -32,10 +30,16 @@ console.log ( JSON.stringify(db, '', 2));
 app.use(passport.initialize());
 require('./config/passport')(passport);
 
-//app.use('/api/users', users);
-
-// Add routes, both API and view
+// Add API routes:
+// server.js <-- ./routes/index.js <-- ./routes/api/index.js <-- deliveries, users , etc.
 app.use(routes);
+
+// Send every other request to the React app
+// Define any API routes before this runs
+// Note: For dev environment, you need to run the build, so the file is available.  
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "./client/build/index.html"));
+});
 
 app.listen(port, () => {
     console.log(`Server is listening at http://localhost:${port}`);
