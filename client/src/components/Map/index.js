@@ -38,8 +38,8 @@ class Map extends Component {
         lng: ''
     },
     destMarkerPosition: {
-        lat: this.props.center.lat,
-        lng: this.props.center.lng
+        lat: '',
+        lng: ''
     },
     origPlaceId : '',
     destPlaceId : ''
@@ -47,7 +47,7 @@ class Map extends Component {
  }
 
 /**
-  * Get the current address from the default map position and set those values in the state
+  * Get the current delivery address from the default map position and set those values in the state
   */
  componentDidMount() {
 
@@ -65,7 +65,10 @@ class Map extends Component {
       console.log( `componentDidMount[65]: ${city}, ${area}, ${state}, ${destPlaceId}`);
     
       let newDestAddress = { ...this.state.destAdress }; 
+      let newDestMarkerPosition = { ...this.state.destMarkerPosition};
+
       console.log (`componentDidMount[68]:` + JSON.stringify(newDestAddress));
+      
       newDestAddress = { 
         address : ( address ) ? address : '',
         city   : ( city )    ? city    : '',
@@ -73,9 +76,20 @@ class Map extends Component {
         state  : ( state )   ? state   : ''
       };
 
+      newDestMarkerPosition = {
+        lat: this.props.center.lat,
+        lng: this.props.center.lng
+      };
+
       console.log (`componentDidMount[76]` + JSON.stringify(newDestAddress));
-      this.setState( { destAddress : newDestAddress } );  
-      this.setState( { destPlaceId : ( destPlaceId ) ? destPlaceId : '' } , (res) => console.log (JSON.stringify(this.state)) );
+      
+      this.setState( { destAddress : newDestAddress,
+                       destPlaceId : ( destPlaceId ) ? destPlaceId : '',
+                       destMarkerPosition : newDestMarkerPosition 
+                     },  () => {
+                                  this.props.handleAddressChange('destAddress', this.state.destAddress.address);
+                                  this.props.onDestLocationIDChange(this.state.destPlaceId);
+                               });
     },
    error => {
     console.error(error);
@@ -96,12 +110,12 @@ class Map extends Component {
    this.state.origMarkerPosition.lat !== nextState.origMarkerPosition.lat ||
    this.state.destMarkerPosition.lat !== nextState.destMarkerPosition.lat ||
    this.state.origMarkerPosition.lng !== nextState.origMarkerPosition.lng ||
-   this.state.destMarkerPosition.lng !== nextState.destMarkerPosition.lng ||
-   this.state.origAddress.address    !== nextState.origAddress.address    ||
-   this.state.destAddress.address    !== nextState.destAddress.address
+   this.state.destMarkerPosition.lng !== nextState.destMarkerPosition.lng
    ) {
+    console.log ("Component update: 102: returns true"); 
    return true
   } else {
+    console.log ("Component update: 102: returns false"); 
    return false
   }
  }
@@ -181,55 +195,6 @@ class Map extends Component {
  };
 
 /**
-  * And function for city,state and address input
-  * @param event
-  */
- onChange = ( event ) => {
-
-   let { name, value } = event.target; 
-   
-   console.log ( `onChange[188] event name is ${name}`);
-   console.log ( `onChange[189] event value is ${value} length is ${value.length}`);
-
-   //The text field was cleared.  Reset the corresponding address attributes.
-  
-     if ( (value.length === 0) && (name === 'origAddress')) {
-       this.setState({ origAddress : {
-                       address: '',
-                       city: '',
-                       area: '',
-                       state: ''
-                     },
-                     origMarkerPosition: {
-                       lat: '',
-                       lng: ''
-                     },
-                     origPlaceId : ''
-                     }
-                     , () => this.props.handleAddressChange(this.state.origAddress.address,this.state.destAddress.address));
-     }
-     else if (value.length === 0 && name === 'destAddress') {
-      this.setState({  destAddress : {
-                        address: '',
-                        city: '',
-                        area: '',
-                        state: ''
-                      },
-                      destMarkerPosition: {
-                        lat: '',
-                        lng: ''
-                      },
-                      destPlaceId : ''
-                    }
-                    , () => this.props.handleAddressChange(this.state.origAddress.address,this.state.destAddress.address));
-     }
-     else {
-      this.setState({ [event.target.name]: event.target.value });   
-     }
-  
- };
-
-/**
   * This Event triggers when the marker window is closed
   *
   * @param event
@@ -272,7 +237,8 @@ class Map extends Component {
     },  () => { 
       console.log ("onOrigPlaceSelected[243]" + JSON.stringify(this.state)) 
       mapUtils.computeDistanceTime( this.state.origPlaceId, this.state.destPlaceId );
-      this.props.handleAddressChange(this.state.origAddress.address,this.state.destAddress.address );
+      this.props.handleAddressChange('origAddress', this.state.origAddress.address );
+      this.props.onOrigLocationIDChange(this.state.origPlaceId);
     });
    };
 
@@ -311,7 +277,8 @@ class Map extends Component {
     destPlaceId : ( destPlaceId ) ? destPlaceId : ''
    }, () => {
      console.log ("onDestPlaceSelected[243]" + JSON.stringify(this.state));
-     this.props.handleAddressChange(this.state.origAddress.address,this.state.destAddress.address);
+    this.props.handleAddressChange('destAddress', this.state.destAddress.address);
+    this.props.onDestLocationIDChange(this.state.destPlaceId);
    });
 
   };
@@ -359,7 +326,8 @@ class Map extends Component {
        origPlaceId : ( origPlaceId ) ? origPlaceId : ''
      },() => {
       console.log ("onDestPlaceSelected[243]" + JSON.stringify(this.state));
-      this.props.handleAddressChange(this.state.origAddress.address,this.state.destAddress.address);
+      this.props.handleAddressChange('origAddress',this.state.origAddress.address);
+      this.props.onOrigLocationIDChange(this.state.origPlaceId);
     });
    },
    error => {
@@ -411,7 +379,8 @@ class Map extends Component {
        destPlaceId : ( destPlaceId ) ? destPlaceId : ''
      }, () => {
       console.log ("onDestPlaceSelected[243]" + JSON.stringify(this.state));
-      this.props.handleAddressChange(this.state.origAddress.address,this.state.destAddress.address);
+      this.props.handleAddressChange('destAddress', this.state.destAddress.address);
+      this.props.onDestLocationIDChange(this.state.destPlaceId);
     });
    },
    error => {
@@ -476,6 +445,8 @@ const AsyncMap = withScriptjs(
     />
     }
 
+
+   
     <div className="input-group mt-3 mb-3">
       <div className="input-group-prepend">
           <span className="input-group-text" id="origLocation">Pick-Up Location:</span>
@@ -487,10 +458,10 @@ const AsyncMap = withScriptjs(
          aria-label="origLocation" 
          aria-describedby="origLocation"
          name="origAddress"
-         value = { this.state.origAddress.address }
-         onChange = { this.onChange }
+         onChange={ (event) => this.props.handleAddressChange(event.target.name, event.target.value) }
+         defaultValue = { this.state.origAddress.address }
          onPlaceSelected={ this.onOrigPlaceSelected }
-         placeholder={ this.props.errors.origAddress.length > 0 && this.props.errors.origAddress }
+         placeholder="Please select a pick-up location."
          types={['geocode']}
        />
     </div>
@@ -506,10 +477,10 @@ const AsyncMap = withScriptjs(
         aria-label="destLocation" 
         aria-describedby="destLocation"
         name="destAddress"
-        value = { this.state.destAddress.address }
-        onChange= {this.onChange }
+        onChange={ (event) => this.props.handleAddressChange(event.target.name, event.target.value) }
+        defaultValue={this.state.destAddress.address}
         onPlaceSelected={ this.onDestPlaceSelected }
-        placeholder={ this.props.errors.destAddress.length > 0 && this.props.errors.destAddress}
+        placeholder="Please select a delivery location."
         types={['geocode']}
       />
     </div>

@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "UCF COding Bootcamp Final Project",
   "main": "server.js",
+  "proxy": "http://localhost:5000",
   "scripts": {
     "client-install": "npm install --prefix client",
     "start": "node server.js",

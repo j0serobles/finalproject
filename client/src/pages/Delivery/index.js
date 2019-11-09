@@ -3,6 +3,7 @@ import { geolocated } from "react-geolocated";
 import Map            from "../../components/Map";
 import AppDropdown       from "../../components/AppDropdown";
 import Modal             from "../../components/Modal";
+import axios             from 'axios';
 import './style.css';
 
 import { Form,
@@ -14,21 +15,24 @@ import { Form,
          Container, 
          Row, 
          Col} from 'reactstrap';
+import Axios from "axios";
 
 class Delivery extends React.Component {
   state = {
     showModal : false,
     origAddress : "",
+    origLocationID: "",
     destAddress : "",
+    destLocationID: "",
     itemCount   : 1,
     itemDesc    : "",
     itemWeight  : 0, 
     errors      : {
-      origAddress : 'Please select a pick-up address.', 
+      origAddress : '', 
       destAddress : '', 
       itemCount   : '', 
-      itemDesc    : 'Please enter a description.', 
-      itemWeight  : 'Please enter an aprox. weight.'
+      itemDesc    : '', 
+      itemWeight  : ''
     }
   }
 
@@ -59,9 +63,30 @@ class Delivery extends React.Component {
   submitDeliveryRequest = function(event) {
     event.preventDefault();
     if (this.validateForm(this.state.errors)) { 
-      this.setState( {showModal : true}) ; 
+      this.setState( {showModal : true} ,
+       () => {
+        let newDelivery = {
+              "origAddress"       : this.state.origAddress,
+              "destAddress"       : this.state.destAddress,
+              "origLocationID"    : this.origLocationID, 
+              "destLocationID"    : this.destLocationID, 
+              "status"            : "P", 
+              "itemDescription"   : this.itemDesc,
+              "itemWeight"        : this.itemWeight,
+              "itemWeightUnits"   : '',
+              "itemVolume"        : null, 
+              "itemVolUnits"      : '',
+              "totalCost"         : "0",
+              "estimatedDuration" : "0", 
+              "actualDuration"    : "0",
+              "customer"          : ""
+        }
+        axios.post('/api/delivery', newDelivery)
+        .then( (res) => console.log ('New delivery request saved', res.data))
+        .catch( error => console.log (error) ) ; 
+        });
+      } 
     }
-  }
 
   validateForm = errorsObject => {
       let valid = true;
@@ -69,13 +94,19 @@ class Delivery extends React.Component {
         // if we have an error string set valid to false
         (val) => val.length > 0 && (valid = false)
       );
+      if ( (!this.state.destAddress || this.state.destAddress.length === 0)    ||
+           (!this.state.origAddress || this.state.origAddress.length === 0)    ||
+           (!this.state.itemCount   || parseInt(this.state.itemCount) <= 0)    ||
+           (!this.state.itemDesc    || this.state.itemDesc.length     < 2)     ||
+           (!this.state.itemWeight  || parseFloat(this.state.itemWeight) <= 0) ) valid = false;
+
       return valid;
     }
 
   handleInputChange = event => {
     let errors = this.state.errors;
     const {name, value} = event.target; 
-    console.log ("Handle input change [68]", name , "=", value); 
+    console.log ("Handle input change [78]", name , "=", value); 
     
     switch (name) { 
       case 'itemCount'  : errors.itemCount   = (!value || parseInt(value) <= 0) ? 'Please enter 1 or more.' : ''; 
@@ -90,14 +121,32 @@ class Delivery extends React.Component {
     this.setState({ [name]: value, errors });
   };
 
-  handleAddressChange = ( origAddress, destAddress ) => {
-    console.log ("handleAddressChange : " + origAddress + " , " + destAddress);
+  onOrigLocationIDChange = origLocationID => {
+    this.setState( {
+      origLocationID : origLocationID
+    }); 
+
+  }
+
+  onDestLocationIDChange = destLocationID => {
+    this.setState( {
+      destLocationID : destLocationID
+    }); 
+
+  }
+  handleAddressChange = ( addressAttributeName, addressAttributeValue) => {
+
+    //Set this component's stat origAddress and destAddress accordingly, so they can be 
+    //used later to validate the form  and display the dialog.
+
+    console.log ("handleAddressChange : ", addressAttributeName,  addressAttributeValue );
+
     let errors = this.state.errors;
 
-    errors.origAddress = (!origAddress || origAddress.length === 0) ? 'A pickup address is required.'   : '';
-    errors.destAddress = (!destAddress || destAddress.length === 0) ? 'A delivery address is required.' : '';
-
-    this.setState({ origAddress : origAddress, destAddress : destAddress, errors });
+    this.setState({ [addressAttributeName] : addressAttributeValue } , () => {
+      errors.origAddress = (!this.state.origAddress || this.state.origAddress.length === 0) ? 'A pickup address is required.'   : '';
+      errors.destAddress = (!this.state.destAddress || this.state.destAddress.length === 0) ? 'A delivery address is required.' : '';
+    });
   };
 
     render() {
@@ -122,7 +171,8 @@ class Delivery extends React.Component {
                               height='20em'
                               zoom={15}
                               handleAddressChange={this.handleAddressChange}
-                              errors={errors}
+                              onOrigLocationIDChange={this.onOrigLocationIDChange}
+                              onDestLocationIDChange={this.onDestLocationIDChange}
                             />
                           </Col>
                         </Row>
