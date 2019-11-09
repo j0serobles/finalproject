@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types'; 
 import { connect } from 'react-redux';
 import axios from 'axios';
-import  {Form, FormGroup, Label, Input, Col, Spinner} from 'reactstrap'; 
+import  {Form, FormGroup, Label, Input, Col, Spinner, Row, Button} from 'reactstrap'; 
+import  { ListGroup, ListGroupItem } from 'reactstrap';
 import {fetchDeliveries,  setListFilter, setDataLoading } from '../../actions/deliveryActions';
 
 
@@ -25,15 +26,30 @@ class DeliveryList extends Component {
     render() {
 
         let deliveryList;
+        let deliveryListItems;
+
+        
+
         if (this.props.deliveries.length > 0) { 
-            deliveryList = this.props.deliveries.map ( delivery => (
-            <div className="text-left" key={delivery._id}>
-                <p><strong>Pick up at :</strong> {delivery.origAddress}</p>
-                <p><strong>Deliver to :</strong> {delivery.destAddress} </p>
-                <p><strong>Item(s) Description:</strong> {delivery.itemDescription}</p>
-                <hr />
-            </div>
-            ) )
+          deliveryListItems = this.props.deliveries.map ( delivery => (
+            <ListGroupItem className="text-left" href="#" key={delivery._id} action>
+                <Row>
+                    <Col sm={8}>
+                      <strong>Pick up at :</strong>      {delivery.origAddress}<br></br>
+                      <strong>Deliver to :</strong>         {delivery.destAddress}<br></br>
+                      <strong>Item(s) Description:</strong> {delivery.itemDescription}
+                    </Col>
+                    <Col sm={4}>
+                      <Button>Open</Button>
+                    </Col>
+                </Row>
+            </ListGroupItem>
+          ));
+
+          deliveryList =
+            <ListGroup>
+              {deliveryListItems}      
+            </ListGroup>
         }
         else { 
             deliveryList = <p>No deliveries found.</p>
