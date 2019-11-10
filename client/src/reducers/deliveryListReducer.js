@@ -1,11 +1,13 @@
-import { SET_LIST_FILTER , GET_DELIVERIES, DATA_LOADING } from '../actions/types';
+import { SET_LIST_FILTER , GET_DELIVERIES, DATA_LOADING, TOGGLE_MODAL} from '../actions/types';
 
 const isEmpty = require('is-empty');
 
 const initialState = {
-    deliveries : [],
+    deliveries  : [],
     filterValue : "",
-    isLoading   : false
+    isLoading   : false, 
+    isModalOpen : false,
+    currentDelivery : null
 }
 
 export default function(state = initialState, action){
@@ -26,6 +28,11 @@ export default function(state = initialState, action){
             ...state,
             loading: action.payload
         };
+        case TOGGLE_MODAL:
+            return {
+                ...state,
+                isModalOpen: !state.isModalOpen
+            };
         default:
             return state;
     }

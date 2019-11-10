@@ -1,12 +1,19 @@
 import axios from 'axios';
 import setAuthToken from '../utility/setAuthToken';
 import jwt_decode from 'jwt-decode';
-import {  SET_LIST_FILTER , GET_DELIVERIES, DATA_LOADING } from './types';
+import {  SET_LIST_FILTER , GET_DELIVERIES, DATA_LOADING, TOGGLE_MODAL, SET_CURRENT_DELIVERY } from './types';
 
 export const setDataLoading = (isLoading) => {
     return {
         type: DATA_LOADING,
         payload : isLoading
+    };
+};
+
+
+export const toggleModal = () => {
+    return {
+        type: TOGGLE_MODAL
     };
 };
 
