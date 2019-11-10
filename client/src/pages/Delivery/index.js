@@ -21,8 +21,10 @@ class Delivery extends React.Component {
   state = {
     showModal : false,
     origAddress : "",
+    origLocation : null,
     origLocationID: "",
     destAddress : "",
+    destLocation: null,
     destLocationID: "",
     itemCount   : 1,
     itemDesc    : "",
@@ -68,7 +70,9 @@ class Delivery extends React.Component {
         let newDelivery = {
               "origAddress"       : this.state.origAddress,
               "destAddress"       : this.state.destAddress,
-              "origLocationID"    : this.state.origLocationID, 
+              "origLocation"      : this.state.origLocation,
+              "origLocationID"    : this.state.origLocationID,
+              "destLocation"      : this.state.destLocation, 
               "destLocationID"    : this.state.destLocationID, 
               "status"            : "P", 
               "itemDescription"   : this.state.itemDesc,
@@ -135,6 +139,23 @@ class Delivery extends React.Component {
     }); 
 
   }
+
+  onOrigLocationChange = origLocation => {
+    this.setState( {
+      origLocation : origLocation
+    }); 
+  }
+
+  onDestLocationChange = destLocation => {
+    console.log ("OnDestLocationChange[150]", JSON.stringify(destLocation, '', 2)); 
+    this.setState( {
+      destLocation : destLocation
+    }); 
+
+  }
+
+
+
   handleAddressChange = ( addressAttributeName, addressAttributeValue) => {
 
     //Set this component's stat origAddress and destAddress accordingly, so they can be 
@@ -172,8 +193,11 @@ class Delivery extends React.Component {
                               height='20em'
                               zoom={15}
                               handleAddressChange={this.handleAddressChange}
+                              onOrigLocationChange={this.onOrigLocationChange}
                               onOrigLocationIDChange={this.onOrigLocationIDChange}
+                              onDestLocationChange={this.onDestLocationChange}
                               onDestLocationIDChange={this.onDestLocationIDChange}
+
                             />
                           </Col>
                         </Row>

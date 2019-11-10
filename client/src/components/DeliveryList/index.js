@@ -5,7 +5,9 @@ import { Form, FormGroup, Label, Input, Col, Spinner, Row, Button, Modal, ModalH
 import { ListGroup, ListGroupItem } from 'reactstrap';
 import { fetchDeliveries,  setListFilter, setDataLoading, toggleModal} from '../../actions/deliveryActions';
 import { compose, withProps } from "recompose";
-import { withScriptjs, withGoogleMap, GoogleMap, Marker } from "react-google-maps";
+import StaticMap from '../StaticMap'
+
+
 
 let googleMapsKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
 let googleMapsURL = "https://maps.googleapis.com/maps/api/js?key=" + googleMapsKey + "&libraries=geometry,drawing,places";
@@ -105,28 +107,18 @@ class DeliveryList extends Component {
 
       const spinner = this.props.isDataLoading ? <Spinner style={{ width: '3rem', height: '3rem' }} type="grow" /> : null; 
 
-      const DialogContents = compose(
-          withProps({
-            googleMapURL    : googleMapsURL,
-            loadingElement  : <div style={{ height: `100%` }} />,
-            containerElement: <div style={{ height: `300px`}} />,
-            mapElement      : <div style={{ height: `100%` }} />,
-          }),
-          withScriptjs,
-          withGoogleMap
-        )( props =>
-             <GoogleMap defaultZoom={8} defaultCenter={{ lat: 28.441508, lng:  -81.616709 }} >
-               <Marker position={{ lat: 28.441508, lng: -81.616709 }} />
-             </GoogleMap>
-        );
 
-
-      const DialogContents2 = () => ( this.state.currentDelivery &&
+      
+      const DialogContents = () => ( this.state.currentDelivery &&
       <div>
-        <strong>Pick Up Address:</strong> {this.state.currentDelivery.origAddress}<br></br>
+        <StaticMap origLocation={this.state.currentDelivery.origLocation}  
+                   destLocation={this.state.currentDelivery.destLocation} 
+        />
+        <strong>Pick Up Address:</strong>  {this.state.currentDelivery.origAddress}<br></br>
         <strong>Delivery Address:</strong> {this.state.currentDelivery.destAddress}<br></br>
         <strong>Items: </strong> { this.state.currentDelivery.itemCount + " " + this.state.currentDelivery.itemDescription + ", weighting about " +  
-                                   this.state.currentDelivery.itemWeight + this.state.currentDelivery.itemWeightUnits }
+                                   this.state.currentDelivery.itemWeight + this.state.currentDelivery.itemWeightUnits                        
+                                  }
       </div>);
       
 
@@ -140,12 +132,7 @@ class DeliveryList extends Component {
               <this.DeliveryInfoDialog>
                 <Row>
                   <Col>
-                <DialogContents/>
-                </Col>
-                </Row>
-                <Row>
-                  <Col>
-                <DialogContents2/>
+                <DialogContents />
                 </Col>
                 </Row>
               </this.DeliveryInfoDialog>

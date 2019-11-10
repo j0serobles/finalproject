@@ -3,7 +3,8 @@ import { withGoogleMap, GoogleMap, withScriptjs, InfoWindow, Marker } from "reac
 import Autocomplete from 'react-google-autocomplete';
 import Geocode from "react-geocode";
 import DirectionRendererComponent from '../DirectionRendererComponent'; 
-import mapUtils from '../../utility/mapUtils';
+
+import mapUtils  from '../../utility/mapUtils';
 
 let googleMapsKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
 let googleMapsURL = "https://maps.googleapis.com/maps/api/js?key=" + googleMapsKey + "&libraries=geometry,drawing,places";
@@ -82,6 +83,7 @@ class Map extends Component {
       };
 
       console.log (`componentDidMount[76]` + JSON.stringify(newDestAddress));
+      console.log (`componentDidMount[76]` + JSON.stringify(newDestMarkerPosition));
       
       this.setState( { destAddress : newDestAddress,
                        destPlaceId : ( destPlaceId ) ? destPlaceId : '',
@@ -89,6 +91,7 @@ class Map extends Component {
                      },  () => {
                                   this.props.handleAddressChange('destAddress', this.state.destAddress.address);
                                   this.props.onDestLocationIDChange(this.state.destPlaceId);
+                                  this.props.onDestLocationChange(this.state.destMarkerPosition);
                                });
     },
    error => {
@@ -239,6 +242,7 @@ class Map extends Component {
       mapUtils.computeDistanceTime( this.state.origPlaceId, this.state.destPlaceId );
       this.props.handleAddressChange('origAddress', this.state.origAddress.address );
       this.props.onOrigLocationIDChange(this.state.origPlaceId);
+      this.props.onOrigLocationChange(this.state.origMarkerPosition);
     });
    };
 
@@ -279,6 +283,7 @@ class Map extends Component {
      console.log ("onDestPlaceSelected[243]" + JSON.stringify(this.state));
     this.props.handleAddressChange('destAddress', this.state.destAddress.address);
     this.props.onDestLocationIDChange(this.state.destPlaceId);
+    this.props.onDestLocationChange(this.state.destMarkerPosition);
    });
 
   };
@@ -328,6 +333,7 @@ class Map extends Component {
       console.log ("onDestPlaceSelected[243]" + JSON.stringify(this.state));
       this.props.handleAddressChange('origAddress',this.state.origAddress.address);
       this.props.onOrigLocationIDChange(this.state.origPlaceId);
+      this.props.onOrigLocationChange(this.state.origMarkerPosition);
     });
    },
    error => {
@@ -381,6 +387,7 @@ class Map extends Component {
       console.log ("onDestPlaceSelected[243]" + JSON.stringify(this.state));
       this.props.handleAddressChange('destAddress', this.state.destAddress.address);
       this.props.onDestLocationIDChange(this.state.destPlaceId);
+      this.props.onDestLocationChange(this.state.destMarkerPosition);
     });
    },
    error => {

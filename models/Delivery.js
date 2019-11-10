@@ -10,6 +10,30 @@ const DeliverySchema = new Schema({
         type: String,
         required: false
     },
+    origLocation: {
+        lat : {
+            type: String,
+            required: true
+        },
+        lng : {
+            type : String,
+            required : true
+        }
+    },
+    destLocation: {
+        lat : {
+            type: String,
+            required: true
+        },
+        lng : {
+            type : String,
+            required : true
+        }
+    },
+    destLocationID: {
+        type: String,
+        required: true
+    },
     origLocationID: {
         type: String,
         required: true

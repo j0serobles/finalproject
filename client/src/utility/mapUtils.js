@@ -5,24 +5,26 @@ import axios from 'axios';
 // computeDistanceTime - Computes distance and time between two 
 // location id's using the Google Distance Matrix API
 
-const mapUtils = {
+let googleKey = process.env.REACT_APP_GOOGLE_PLACES_API_KEY;
 
-computeDistanceTime : function( origLocationId, destLocationId ) {
-    // origLocationId = Origination Location id from Google Places API
-    // destLocationId = Destination location id from Google Places API
-    let googleKey = process.env.REACT_APP_GOOGLE_PLACES_API_KEY;
-    let googleURL = "https://maps.googleapis.com/maps/api/distancematrix/json?origins=place_id:" + origLocationId 
-    + "&destinations=place_id:" + destLocationId + "&mode=driving&key=" + googleKey + "&libraries=geometry,drawing,places";
 
-        console.log (`mapUtils.js[13] : ${googleURL}`);
+const mapUtils = { 
 
-        // axios.get (googleURL).then ( data => {
-        //     console.log (data) ; 
-        // }).catch ( error => {
-        //     console.log (error) ; 
-        // });
-  } 
+    computeDistanceTime( origLocationId, destLocationId ) {
+          // origLocationId = Origination Location id from Google Places API
+          // destLocationId = Destination location id from Google Places API
 
-}
+          let googleURL = "https://maps.googleapis.com/maps/api/distancematrix/json?origins=place_id:" + origLocationId 
+          + "&destinations=place_id:" + destLocationId + "&mode=driving&key=" + googleKey + "&libraries=geometry,drawing,places";
 
-export default mapUtils
+              console.log (`mapUtils.js[13] : ${googleURL}`);
+
+              // axios.get (googleURL).then ( data => {
+              //     console.log (data) ; 
+              // }).catch ( error => {
+              //     console.log (error) ; 
+              // });
+      }
+    }
+
+export default mapUtils;
