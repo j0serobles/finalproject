@@ -11,14 +11,14 @@ import {
 
 function StaticMap(props) {
 
-    let googleKey = process.env.REACT_APP_GOOGLE_PLACES_API_KEY;
+    let googleKey = props.apiKey;
 
-    console.log ("StaticMap[14]" , props);
+    //console.log ("StaticMap[14]" , props);
 
     const origin      = props.origLocation.lat + "," + props.origLocation.lng; 
     const destination = props.destLocation.lat + "," + props.destLocation.lng;
 
-    console.log (origin, destination);
+   // console.log (origin, destination);
 
       return (
         <div>
@@ -33,13 +33,9 @@ function StaticMap(props) {
                     color="red"
                     label="End"
                     />
-                    {/* <Direction
-                      origin="28.5217648,-81.46345210000004"
-                      destination="28.4415297,-81.61667729999999" 
-                      /> */}
-                    <Direction
+                    {/* <Direction apiKey={googleKey}
                       origin={origin}
-                      destination={destination} />
+                      destination={destination} /> */}
 
                 </StaticGoogleMap>
         </div>

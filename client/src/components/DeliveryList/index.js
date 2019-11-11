@@ -6,6 +6,7 @@ import { ListGroup, ListGroupItem } from 'reactstrap';
 import { fetchDeliveries,  setListFilter, setDataLoading, toggleModal} from '../../actions/deliveryActions';
 import { compose, withProps } from "recompose";
 import StaticMap from '../StaticMap'
+import StatMap   from '../StatMap';
 
 
 
@@ -111,8 +112,11 @@ class DeliveryList extends Component {
       
       const DialogContents = () => ( this.state.currentDelivery &&
       <div>
-        <StaticMap origLocation={this.state.currentDelivery.origLocation}  
-                   destLocation={this.state.currentDelivery.destLocation} 
+        <StatMap origLat={this.state.currentDelivery.origLocation.lat}
+                 origLng={this.state.currentDelivery.origLocation.lng}  
+                 destLat={this.state.currentDelivery.destLocation.lat}
+                 destLng={this.state.currentDelivery.destLocation.lng} 
+                 gMapsURL={"https://maps.googleapis.com/maps/api/js?key=" + process.env.REACT_APP_GOOGLE_MAPS_API_KEY}
         />
         <strong>Pick Up Address:</strong>  {this.state.currentDelivery.origAddress}<br></br>
         <strong>Delivery Address:</strong> {this.state.currentDelivery.destAddress}<br></br>
