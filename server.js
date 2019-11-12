@@ -1,11 +1,18 @@
-const express = require('express');
-const mongoose = require('mongoose');
+const express    = require('express');
+const server     = require('http'); 
+const io         = require('socket.io'); 
+const mongoose   = require('mongoose');
 const bodyParser = require('body-parser');
-const passport = require('passport');
+const passport   = require('passport');
+const routes     = require("./routes");
 
-const routes = require("./routes");
+// Starting with 3.0, express apps have become request handler functions that you pass to http or http Server.
+//You need to pass the Server to socket.io, and not the express application function. 
 
-const app = express();
+const app        = express();
+const httpServer = server.createServer(app); 
+const ioServer   = io(httpServer); 
+
 const port = process.env.PORT || 5000;
 
 //Which front end to use, basaed on NODE_ENV variable
@@ -42,6 +49,20 @@ app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, defaultURL));
 });
 
-app.listen(port, () => {
+//On new socket.io connection:
+ioServer.on('connection' , socket => {
+  console.log (' User connected.');
+
+  socket.on('delivery-offer', deliveryId => {
+    ioServer.emit(`${deliveryId}`, 'I would to it for free');
+  }); 
+
+  socket.on('offer-accepted', deliveryId => {
+    ioServer.emit(`${deliveryId}-accepted`, `${deliveryId} Offer accepted`);
+  });
+});
+  
+//Call listen() on the server, not the app
+httpServer.listen(port, () => {
     console.log(`Server is listening at http://localhost:${port}`);
 });

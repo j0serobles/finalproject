@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types'; 
 import { connect } from 'react-redux';
-import { Form, FormGroup, Label, Input, Col, Spinner, Row, Button, Modal, ModalHeader, ModalBody, ModalFooter} from 'reactstrap'; 
+import { Form, FormGroup, Label, Input, Col, Spinner, Row, Button, Modal, ModalHeader, ModalBody, ModalFooter  } from 'reactstrap'; 
 import { ListGroup, ListGroupItem } from 'reactstrap';
 import { fetchDeliveries,  setListFilter, setDataLoading, toggleModal} from '../../actions/deliveryActions';
 import { compose, withProps } from "recompose";
 import StaticMap from '../StaticMap'
 import StatMap   from '../StatMap';
+import openSocket from 'socket.io-client'; 
 
 
 
@@ -19,7 +20,9 @@ class DeliveryList extends Component {
     constructor(props) { 
         super(props); 
         this.state = { 
-          currentDelivery : null
+          currentDelivery : null,
+          showStatusSpinner : false,
+          currentStatus   : ''
         }
         this.props.fetchDeliveries('P'); 
     }
@@ -42,7 +45,7 @@ class DeliveryList extends Component {
                      {props.children}
                   </ModalBody>
                   <ModalFooter>
-                    <Button color="primary" onClick={this.props.toggleModal}>Make Offer</Button>
+                    <Button color="primary" onClick={()=> this.onNotifyOffer(this.state.currentDelivery)}>Make Offer</Button>
                     <Button color="primary" onClick={this.props.toggleModal}>Dismiss</Button>
                   </ModalFooter>
                 </Modal>)
@@ -56,6 +59,29 @@ class DeliveryList extends Component {
       this.setState ( { currentDelivery: delivery } , () => this.props.toggleModal()) ; 
     }
 
+    //Executes when driver sends offer to customer.  Sends message to Delivery component indicating an offer to complete the shipment.
+    onNotifyOffer = (delivery) => { 
+      
+      const socket = openSocket('http://localhost:5000');
+      console.log ('Before emit for ' , `${delivery._id}`);
+      socket.emit('delivery-offer', delivery._id); 
+      
+      //After offer message is sent, wait for customer to reply.
+      this.setState( { 
+        currentStatus     : "Waiting for customer to accept/reject offer.",
+        showStatusSpinner : true
+      });
+      
+      //When acceptance response is received, remove the spinner and set status message.
+      socket.on(`${delivery._id}-accepted`, (msg) => { 
+        console.log('DeliveryList[77] : ', msg); 
+        this.setState ( {
+          showStatusSpinner : false,
+          currentStatus   : ' Offer was accepted, please proceed to the pick-up location.'
+        }); 
+      })
+    }
+    
     render() {
 
         let deliveryList;
@@ -110,8 +136,9 @@ class DeliveryList extends Component {
 
 
       
-      const DialogContents = () => ( this.state.currentDelivery &&
-      <div>
+      const DialogContents = () => ( 
+      ( this.state.currentDelivery &&
+        <div>
         <StatMap origLat={this.state.currentDelivery.origLocation.lat}
                  origLng={this.state.currentDelivery.origLocation.lng}  
                  destLat={this.state.currentDelivery.destLocation.lat}
@@ -123,7 +150,11 @@ class DeliveryList extends Component {
         <strong>Items: </strong> { this.state.currentDelivery.itemCount + " " + this.state.currentDelivery.itemDescription + ", weighting about " +  
                                    this.state.currentDelivery.itemWeight + this.state.currentDelivery.itemWeightUnits                        
                                   }
-      </div>);
+                                  { this.state.showStatusSpinner && <Spinner type="grow" color="primary" /> } 
+                                  <p>{this.state.currentStatus}</p>
+        </div>
+     
+      ));
       
 
         return (

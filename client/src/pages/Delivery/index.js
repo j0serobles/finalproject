@@ -1,25 +1,35 @@
 import React          from "react";
 import { geolocated } from "react-geolocated";
 import Map            from "../../components/Map";
-import AppDropdown       from "../../components/AppDropdown";
-import Modal             from "../../components/Modal";
-import axios             from 'axios';
+import AppDropdown    from "../../components/AppDropdown";
+import AppModal       from "../../components/AppModal";
+import axios          from 'axios';
+import openSocket     from 'socket.io-client'; 
 import './style.css';
 
 import { Form,
          FormGroup,
          InputGroup,
          InputGroupAddon,
-         Input,
-         Button, 
-         Container, 
+         Input, 
          Row, 
-         Col} from 'reactstrap';
-import Axios from "axios";
+         Col,
+         Button, 
+         ModalHeader, 
+         ModalBody, 
+         ModalFooter,
+         Spinner } from 'reactstrap';
 
 class Delivery extends React.Component {
-  state = {
-    showModal : false,
+
+  constructor(props) { 
+    super(props); 
+
+    //Communications socket: 
+    this.socket = openSocket('http://localhost:5000');
+
+   this.state = {
+    deliveryId : null,
     origAddress : "",
     origLocation : null,
     origLocationID: "",
@@ -35,27 +45,63 @@ class Delivery extends React.Component {
       itemCount   : '', 
       itemDesc    : '', 
       itemWeight  : ''
+    },
+    showDeliveryOfferDialog    : false,
+    showDeliveryRequestDialog  : false
+  }
+
+}
+
+  toggleDeliveryRequestDialog = () => {
+    this.setState( {showDeliveryRequestDialog : !this.state.showDeliveryRequestDialog }) ; 
+  }
+
+  toggleDeliveryOfferDialog = () => {
+    this.setState( {showDeliveryOfferDialog : !this.state.showDeliveryOfferDialog }) ; 
+  }
+
+
+  DeliveryRequestDialog = () => { 
+    console.log ("DeliveryRequestDialog[56]:  state.showDeliveryRequestDialog=" + this.state.showDeliveryRequestDialog);
+    
+    let currentMessage = `Looking for drivers to deliver ${this.state.itemCount} ${this.state.itemDesc} ` +
+    ` from address ${this.state.origAddress} to ${this.state.destAddress}.  Please wait ...`;
+
+     if (this.state.showDeliveryRequestDialog) { 
+      return (<AppModal modalState={this.state.showDeliveryRequestDialog} toggle={this.toggleDeliveryRequestDialog}>
+                <ModalHeader toggle={this.toggleDeliveryRequestDialog}>
+                <Spinner type="grow" color="primary" />
+                <span>  Looking for drivers.</span>
+                  </ModalHeader>
+                <ModalBody> 
+                  {currentMessage} 
+                </ModalBody>
+                <ModalFooter>
+                  <Button color="primary" onClick={this.toggleDeliveryRequestDialog}>Cancel Request</Button>{' '}
+                </ModalFooter>
+             </AppModal>)
+    } else { 
+      return null;
     }
   }
 
-  toggleDialog = () => {
-    this.setState( {showModal : !this.state.showModal }) ; 
-  }
 
-  DeliveryRequestDialog = () => { 
-    console.log ("DeliveryRequestDialog() called state.showmodal=" + this.state.showModal);
-    const dialogMessage = `Looking for drivers to deliver ${this.state.itemCount} ${this.state.itemDesc} ` +
-                    ` from address ${this.state.origAddress} to ${this.state.destAddress}.  `              + 
-                    ` Please wait ...`;
-    if (this.state.showModal) { 
-      return (<Modal 
-                modalTitle="Looking for Drivers..."
-                modalState={this.state.showModal} 
-                toggle={this.toggleDialog}
-                buttonLabel="Cancel Request"
-                >
-               {dialogMessage}
-             </Modal>)
+  //Shown when a driver has made an offer for delivery service.
+  DeliveryOfferDialog = (msg) => { 
+    const dialogMessage = `We can deliver ${this.state.itemCount} ${this.state.itemDesc} ` +
+          ` from address ${this.state.origAddress} to ${this.state.destAddress}.  `        + 
+          ` in about ${this.state.duration}, for $ ${this.state.cost}`;
+    if (this.state.showDeliveryOfferDialog) { 
+      return (<AppModal modalState={this.state.showDeliveryOfferDialog} toggle={this.toggleDeliveryOfferDialog}>
+                <ModalHeader toggle={this.toggleDeliveryOfferDialog}>
+                <span>  Driver available!</span>
+                  </ModalHeader>
+                <ModalBody> {dialogMessage} </ModalBody>
+                <ModalFooter>
+                  <Button color="primary" onClick={this.acceptOffer}>Accept Offer</Button>{' '}
+                  <Button color="primary" onClick={this.toggleDeliveryOfferDialog}>Cancel Request</Button>{' '}
+                </ModalFooter>
+             </AppModal>)
     } else { 
       return null;
     }
@@ -65,7 +111,7 @@ class Delivery extends React.Component {
   submitDeliveryRequest = function(event) {
     event.preventDefault();
     if (this.validateForm(this.state.errors)) { 
-      this.setState( {showModal : true} ,
+      this.setState( { showDeliveryRequestDialog : true} ,
        () => {
         let newDelivery = {
               "origAddress"       : this.state.origAddress,
@@ -85,9 +131,26 @@ class Delivery extends React.Component {
               "actualDuration"    : "0",
               "customer"          : "5dae4e815d63d136b0eebfa4"
         }; 
-        console.log (JSON.stringify(newDelivery, '', 2)); 
+        console.log ('Delivery[89]', JSON.stringify(newDelivery, '', 2)); 
         axios.post('/api/delivery', newDelivery)
-        .then( (res) => console.log ('New delivery request saved.', res.data))
+        .then( (res) => { 
+            this.setState( { deliveryId : res.data._id } , console.log ('New delivery request saved.', res.data) ) ;
+            return (res);
+         }) 
+        .then(  (res) => { 
+          //Connect to socket and wait for a response msg with an offer
+          
+          console.log(`Delivery[98]: Before socket.on ${res.data._id}`);
+          this.socket.on(`${res.data._id}`, (msg) => {
+            console.log ('delivery-offer received.', msg);
+            this.setState( { showDeliveryRequestDialog : false,
+                             showDeliveryOfferDialog   : true 
+                           }
+                         );
+           });
+           console.log(`Delivery[103]: After socket.on ${res.data._id}`);
+          
+        })
         .catch( error => console.log (error) ) ; 
         });
       } 
@@ -154,8 +217,6 @@ class Delivery extends React.Component {
 
   }
 
-
-
   handleAddressChange = ( addressAttributeName, addressAttributeValue) => {
 
     //Set this component's stat origAddress and destAddress accordingly, so they can be 
@@ -170,6 +231,14 @@ class Delivery extends React.Component {
       errors.destAddress = (!this.state.destAddress || this.state.destAddress.length === 0) ? 'A delivery address is required.' : '';
     });
   };
+
+  acceptOffer = () => { 
+    //Customer has accepted the offer for delivery service.
+    //Send message indicating the acceptance, then take user 
+    // to the delivery tracker page.
+    this.socket.emit('offer-accepted', this.state.deliveryId); 
+    this.toggleDeliveryOfferDialog();
+  }
 
     render() {
         
@@ -249,7 +318,8 @@ class Delivery extends React.Component {
                               </Form>
                               </Col>
                               </Row>
-                      <this.DeliveryRequestDialog/>
+                      <this.DeliveryRequestDialog />
+                      <this.DeliveryOfferDialog />
                       </div>
                 ) : (
                     <div>Getting the location data&hellip; </div>
