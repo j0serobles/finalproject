@@ -29,7 +29,7 @@ class Delivery extends React.Component {
 
     const port = process.env.PORT || 5000;
 
-    console.log ("Delivery[30], port is " + port) ; 
+    console.log (`Delivery[30], process.env.PORT = ${process.env.PORT} , port is ${port}`); 
     console.log ("Delivery[31], hostname is " + os.hostname()) ; 
 
     //Communications socket: 
