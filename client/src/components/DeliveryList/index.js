@@ -61,8 +61,10 @@ class DeliveryList extends Component {
 
     //Executes when driver sends offer to customer.  Sends message to Delivery component indicating an offer to complete the shipment.
     onNotifyOffer = (delivery) => { 
+
+      const port = process.env.PORT || 5000;
       
-      const socket = openSocket('http://localhost:5000');
+      const socket = openSocket(`http://localhost:${port}`);
       console.log ('Before emit for ' , `${delivery._id}`);
       socket.emit('delivery-offer', delivery._id); 
       

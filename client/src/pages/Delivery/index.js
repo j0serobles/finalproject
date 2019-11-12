@@ -25,8 +25,10 @@ class Delivery extends React.Component {
   constructor(props) { 
     super(props); 
 
+    const port = process.env.PORT || 5000;
+
     //Communications socket: 
-    this.socket = openSocket('http://localhost:5000');
+    this.socket = openSocket(`http://localhost:${port}`);
 
    this.state = {
     deliveryId : null,
