@@ -20,12 +20,17 @@ import { Form,
          ModalFooter,
          Spinner } from 'reactstrap';
 
+const os = require('os');
+
 class Delivery extends React.Component {
 
   constructor(props) { 
     super(props); 
 
     const port = process.env.PORT || 5000;
+
+    console.log ("Delivery[30], port is " + port) ; 
+    console.log ("Delivery[31], hostname is " + os.hostname()) ; 
 
     //Communications socket: 
     this.socket = openSocket(`http://localhost:${port}`);
