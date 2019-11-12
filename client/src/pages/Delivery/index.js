@@ -27,15 +27,13 @@ class Delivery extends React.Component {
   constructor(props) { 
     super(props); 
 
-    const port = process.env.PORT || 5000;
+    
+    const socketURL = process.env.NODE_ENV === "production" ? '' : 'http://localhost:5000'; 
 
-    console.log (`Delivery[30], process.env.PORT = ${process.env.PORT} , port is ${port}`); 
-    console.log ("Delivery[31], hostname is " + os.hostname()) ; 
 
-    console.log ("Delivery[35]:" + JSON.stringify(process.env, '', 2)); 
 
     //Communications socket: 
-    this.socket = openSocket(`http://localhost:${port}`);
+    this.socket = openSocket(socketURL);
 
    this.state = {
     deliveryId : null,
