@@ -1,5 +1,7 @@
-const app      = require('express')();
-const http     = require('http').createServer(app); 
+const express    = require('express');
+const app        = express(); 
+
+const http       = require('http').createServer(app); 
 const io         = require('socket.io')(http);
 
 const mongoose   = require('mongoose');
@@ -8,6 +10,7 @@ const passport   = require('passport');
 const routes     = require("./routes");
 
 const port = process.env.PORT || 5000;
+
 
 //Which front end to use, basaed on NODE_ENV variable
 if(process.env.NODE_ENV === "production") {
@@ -39,9 +42,6 @@ app.use(routes);
 // Define any API routes before this runs
 // Note: For dev environment, you need to run the build, so the file is available.
 
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, 'build', 'index.html'))
-});
 
 //On new socket.io connection:
 io.on('connection' , socket => {
@@ -55,7 +55,12 @@ io.on('connection' , socket => {
     io.emit(`${deliveryId}-accepted`, `${deliveryId} Offer accepted`);
   });
 });
-  
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, 'build', 'index.html'))
+});
+
+
 //Call listen() on the server, not the app
 http.listen(port, () => {
     console.log(`Server is listening at http://localhost:${port}`);
