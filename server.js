@@ -12,10 +12,10 @@ const routes     = require("./routes");
 const port = process.env.PORT || 5000;
 
 
-//Which front end to use, basaed on NODE_ENV variable
-if(process.env.NODE_ENV === "production") {
-    app.use(express.static("client/build")); 
-}
+// //Which front end to use, basaed on NODE_ENV variable
+// if(process.env.NODE_ENV === "production") {
+//     app.use(express.static("client/build")); 
+// }
 
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
