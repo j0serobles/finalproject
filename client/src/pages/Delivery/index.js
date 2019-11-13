@@ -1,4 +1,4 @@
-import React          from "react";
+import React, { useState } from "react";
 import { geolocated } from "react-geolocated";
 import Map            from "../../components/Map";
 import AppDropdown    from "../../components/AppDropdown";
@@ -18,7 +18,8 @@ import { Form,
          ModalHeader, 
          ModalBody, 
          ModalFooter,
-         Spinner } from 'reactstrap';
+         Spinner , 
+        Alert} from 'reactstrap';
 
 const os = require('os');
 
@@ -54,7 +55,8 @@ class Delivery extends React.Component {
       itemWeight  : ''
     },
     showDeliveryOfferDialog    : false,
-    showDeliveryRequestDialog  : false
+    showDeliveryRequestDialog  : false, 
+    statusMessage              : ''
   }
 
 }
@@ -244,12 +246,22 @@ class Delivery extends React.Component {
     //Send message indicating the acceptance, then take user 
     // to the delivery tracker page.
     this.socket.emit('offer-accepted', this.state.deliveryId); 
-    this.toggleDeliveryOfferDialog();
+    this.toggleDeliveryOfferDialog(); 
+    this.setState ( { 
+        statusMessage: ` Please meet the driver at the designated pick up location: ${this.state.origAddress}`
+      });
   }
+
+
 
     render() {
         
       const {errors} = this.state;
+      const StatusMessage = ()=>  this.state.statusMessage ? (
+        <Alert color="warning" toggle={ () => this.setState( { statusMessage : ''} ) }>
+          {this.state.statusMessage}
+        </Alert>)
+       : null
 
         return  !this.props.isGeolocationAvailable ? (
                     <div>Your browser does not support Geolocation</div>
@@ -257,7 +269,14 @@ class Delivery extends React.Component {
                       <div>Geolocation is not enabled</div>
                 ) :   this.props.coords ? ( 
                      <div className="container">
-                       <Row>
+
+                       <Row className="mt-3">
+                         <Col>
+                         <StatusMessage />
+                         </Col>
+                       </Row>
+  
+                       <Row className="mt-3">
                          <Col sm={12}>
                             <Map
                               google={this.props.google}

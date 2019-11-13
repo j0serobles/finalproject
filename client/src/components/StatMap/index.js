@@ -13,6 +13,7 @@ class StatMap extends React.Component {
   render() {
  
     console.log (JSON.stringify(this.props, '', 2)); 
+
     const origLat = this.props.origLat;
     const origLng = this.props.origLng; 
     const destLat = this.props.destLat; 
@@ -23,7 +24,7 @@ class StatMap extends React.Component {
         googleMapURL: this.props.gMapsURL,
         loadingElement: <div style={{ height: `350px` }} />,
         containerElement: <div style={{ width: `100%` }} />,
-        mapElement: <div style={{height: `350px`, width: `450px` }}  />,
+        mapElement: <div style={{height: `350px`, border : `1px solid` }}  />,
       }),
       withScriptjs,
       withGoogleMap,
@@ -36,10 +37,10 @@ class StatMap extends React.Component {
             travelMode: google.maps.TravelMode.DRIVING,
           }, (result, status) => {
             if (status === google.maps.DirectionsStatus.OK) {
-this.setState({
-                directions: {...result},
-                markers: true
-              })
+               this.setState({
+                 directions: {...result},
+                 markers: true
+               })
             } else {
               console.error(`error fetching directions ${result}`);
             }
@@ -47,16 +48,14 @@ this.setState({
         }
       })
     )(props =>
-      <GoogleMap
-        defaultZoom={3}
-      >
+      <GoogleMap >
         {props.directions && <DirectionsRenderer directions={props.directions} suppressMarkers={props.markers}/>}
       </GoogleMap>
     );
-return (
-        <DirectionsComponent
-        />
-    )
+
+return ( <DirectionsComponent/> )
+
   }
 }
+
 export default StatMap;

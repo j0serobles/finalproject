@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types'; 
 import { connect } from 'react-redux';
-import { Form, FormGroup, Label, Input, Col, Spinner, Row, Button, Modal, ModalHeader, ModalBody, ModalFooter  } from 'reactstrap'; 
+import { Form, FormGroup, Label, Input, Col, Spinner, Row, Button, Modal, ModalHeader, ModalBody, ModalFooter, Alert  } from 'reactstrap'; 
 import { ListGroup, ListGroupItem } from 'reactstrap';
 import { fetchDeliveries,  setListFilter, setDataLoading, toggleModal} from '../../actions/deliveryActions';
 import { compose, withProps } from "recompose";
@@ -23,7 +23,7 @@ class DeliveryList extends Component {
         this.state = { 
           currentDelivery : null,
           showStatusSpinner : false,
-          currentStatus   : ''
+          statusMessage   : ''
         }
         this.props.fetchDeliveries('P'); 
     }
@@ -46,7 +46,7 @@ class DeliveryList extends Component {
                      {props.children}
                   </ModalBody>
                   <ModalFooter>
-                    <Button color="primary" onClick={()=> this.onNotifyOffer(this.state.currentDelivery)}>Make Offer</Button>
+                    { !this.state.showStatusSpinner && <Button color="primary" onClick={()=> this.onNotifyOffer(this.state.currentDelivery)}>Make Offer</Button> }
                     <Button color="primary" onClick={this.props.toggleModal}>Dismiss</Button>
                   </ModalFooter>
                 </Modal>)
@@ -62,16 +62,13 @@ class DeliveryList extends Component {
 
     //Executes when driver sends offer to customer.  Sends message to Delivery component indicating an offer to complete the shipment.
     onNotifyOffer = (delivery) => { 
-
-      
       const socket = openSocket(socketURL);
-      
       console.log ('Before emit for ' , `${delivery._id}`);
       socket.emit('delivery-offer', delivery._id); 
       
       //After offer message is sent, wait for customer to reply.
       this.setState( { 
-        currentStatus     : "Waiting for customer to accept/reject offer.",
+        statusMessage     : "Waiting for customer to accept/reject offer.",
         showStatusSpinner : true
       });
       
@@ -80,10 +77,14 @@ class DeliveryList extends Component {
         console.log('DeliveryList[77] : ', msg); 
         this.setState ( {
           showStatusSpinner : false,
-          currentStatus   : ' Offer was accepted, please proceed to the pick-up location.'
+          statusMessage     : ' Offer was accepted, please proceed to the pick-up location.'
         }); 
       })
     }
+
+
+
+    ///////////////////////////////////////////////////////////////////////////
     
     render() {
 
@@ -139,25 +140,30 @@ class DeliveryList extends Component {
 
 
       
-      const DialogContents = () => ( 
-      ( this.state.currentDelivery &&
-        <div>
-        <StatMap origLat={this.state.currentDelivery.origLocation.lat}
-                 origLng={this.state.currentDelivery.origLocation.lng}  
-                 destLat={this.state.currentDelivery.destLocation.lat}
-                 destLng={this.state.currentDelivery.destLocation.lng} 
-                 gMapsURL={"https://maps.googleapis.com/maps/api/js?key=" + process.env.REACT_APP_GOOGLE_MAPS_API_KEY}
-        />
-        <strong>Pick Up Address:</strong>  {this.state.currentDelivery.origAddress}<br></br>
-        <strong>Delivery Address:</strong> {this.state.currentDelivery.destAddress}<br></br>
-        <strong>Items: </strong> { this.state.currentDelivery.itemCount + " " + this.state.currentDelivery.itemDescription + ", weighting about " +  
-                                   this.state.currentDelivery.itemWeight + this.state.currentDelivery.itemWeightUnits                        
-                                  }
-                                  { this.state.showStatusSpinner && <Spinner type="grow" color="primary" /> } 
-                                  <p>{this.state.currentStatus}</p>
-        </div>
-     
-      ));
+      const DialogContents = () => 
+         this.state.currentDelivery &&
+         <div>
+            <StatMap origLat={this.state.currentDelivery.origLocation.lat}
+                    origLng={this.state.currentDelivery.origLocation.lng}  
+                    destLat={this.state.currentDelivery.destLocation.lat}
+                    destLng={this.state.currentDelivery.destLocation.lng} 
+                    gMapsURL={"https://maps.googleapis.com/maps/api/js?key=" + process.env.REACT_APP_GOOGLE_MAPS_API_KEY}
+            />
+            <strong>Pick Up Address:</strong><br></br>  {this.state.currentDelivery.origAddress}<br></br>
+            <strong>Delivery Address:</strong><br></br> {this.state.currentDelivery.destAddress}<br></br>
+            <strong>Items: </strong><br></br> { this.state.currentDelivery.itemCount + " " + this.state.currentDelivery.itemDescription + ", weighting about " +  
+                                      this.state.currentDelivery.itemWeight + this.state.currentDelivery.itemWeightUnits                        
+                                      }
+                                      { this.state.statusMessage && 
+                                          <Alert className="mt-3" color="info" 
+                                                 toggle={ () => this.setState( { statusMessage : ''} ) }>
+                                            {this.state.showStatusSpinner && <span>  <Spinner type="grow" color="primary" /> </span>}
+                                            <span>  {this.state.statusMessage}</span>
+                                           
+                                          </Alert>
+                                      }
+         </div>
+      
       
 
         return (
