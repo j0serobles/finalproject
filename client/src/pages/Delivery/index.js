@@ -73,13 +73,18 @@ class Delivery extends React.Component {
   DeliveryRequestDialog = () => { 
     console.log ("DeliveryRequestDialog[56]:  state.showDeliveryRequestDialog=" + this.state.showDeliveryRequestDialog);
     
-    let currentMessage = `Looking for drivers to deliver ${this.state.itemCount} ${this.state.itemDesc} ` +
-    ` from address ${this.state.origAddress} to ${this.state.destAddress}.  Please wait ...`;
+    let currentMessage = <p>
+                           { `Looking for drivers to deliver: ${this.state.itemCount} ${this.state.itemDesc} `} <br></br>
+                           <strong>{` from: ` }</strong><br></br> 
+                           {` ${this.state.origAddress} `} <br></br>
+                           <strong>{` to: `}</strong> <br></br>
+                           {` ${this.state.destAddress}.  Please wait ...`} 
+                         </p>
 
      if (this.state.showDeliveryRequestDialog) { 
-      return (<AppModal modalState={this.state.showDeliveryRequestDialog} toggle={this.toggleDeliveryRequestDialog}>
+      return (<AppModal modalState={this.state.showDeliveryRequestDialog} toggle={this.toggleDeliveryRequestDialog} backdrop="static" keyboard={false} > 
                 <ModalHeader toggle={this.toggleDeliveryRequestDialog}>
-                <Spinner type="grow" color="primary" />
+                <Spinner className="pt-1" type="grow" color="primary" />
                 <span>  Looking for drivers.</span>
                   </ModalHeader>
                 <ModalBody> 
@@ -116,6 +121,7 @@ class Delivery extends React.Component {
     }
   }
 
+  /* Sends a new record to the database and signals a new delivery request.  */
   /* Opens a dialog informing user that app is looking for available drivers */
   submitDeliveryRequest = function(event) {
     event.preventDefault();
@@ -140,16 +146,18 @@ class Delivery extends React.Component {
               "actualDuration"    : "0",
               "customer"          : "5dae4e815d63d136b0eebfa4"
         }; 
-        console.log ('Delivery[89]', JSON.stringify(newDelivery, '', 2)); 
+        console.log ('Delivery[149]', JSON.stringify(newDelivery, '', 2)); 
         axios.post('/api/delivery', newDelivery)
         .then( (res) => { 
-            this.setState( { deliveryId : res.data._id } , console.log ('New delivery request saved.', res.data) ) ;
-            return (res);
+          this.setState( { deliveryId : res.data._id } , console.log ('New delivery request saved.', res.data) ) ;
+          return (res);
          }) 
         .then(  (res) => { 
+          //Signal server that a new delivery request has been created:
+          console.log(`Delivery[157]: Before socket.on ${res.data._id}`);
+          this.socket.emit('new-request-created');
           //Connect to socket and wait for a response msg with an offer
-          
-          console.log(`Delivery[98]: Before socket.on ${res.data._id}`);
+          console.log(`Delivery[160]: Before socket.on ${res.data._id}`);
           this.socket.on(`${res.data._id}`, (msg) => {
             console.log ('delivery-offer received.', msg);
             this.setState( { showDeliveryRequestDialog : false,
@@ -157,8 +165,7 @@ class Delivery extends React.Component {
                            }
                          );
            });
-           console.log(`Delivery[103]: After socket.on ${res.data._id}`);
-          
+           console.log(`Delivery[168]: After socket.on ${res.data._id}`);
         })
         .catch( error => console.log (error) ) ; 
         });

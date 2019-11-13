@@ -1,7 +1,14 @@
 import axios from 'axios';
 import setAuthToken from '../utility/setAuthToken';
 import jwt_decode from 'jwt-decode';
-import {  SET_LIST_FILTER , GET_DELIVERIES, DATA_LOADING, TOGGLE_MODAL, SET_CURRENT_DELIVERY } from './types';
+import {  SET_LIST_FILTER , 
+          GET_DELIVERIES, 
+          DATA_LOADING, 
+          TOGGLE_MODAL, 
+          SET_CURRENT_DELIVERY, 
+          SET_STATUS_MESSAGE, 
+          SHOW_SPINNER, 
+          HIDE_SPINNER } from './types';
 
 export const setDataLoading = (isLoading) => {
     return {
@@ -15,7 +22,29 @@ export const toggleModal = () => {
     return {
         type: TOGGLE_MODAL
     };
+}
+
+
+export const showSpinner = () => {
+    return { 
+        type: SHOW_SPINNER
+    };
 };
+
+export const hideSpinner = () => {
+    return { 
+        type: HIDE_SPINNER
+    };
+};
+
+export const setStatusMessage = (message) => {
+    return { 
+        type: SET_STATUS_MESSAGE, 
+        payload: message
+    };
+};
+
+
 
 
 export function fetchDeliveries(statusFilterString) { 

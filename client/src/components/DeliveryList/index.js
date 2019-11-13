@@ -3,7 +3,13 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Form, FormGroup, Label, Input, Col, Spinner, Row, Button, Modal, ModalHeader, ModalBody, ModalFooter, Alert  } from 'reactstrap'; 
 import { ListGroup, ListGroupItem } from 'reactstrap';
-import { fetchDeliveries,  setListFilter, setDataLoading, toggleModal} from '../../actions/deliveryActions';
+import { fetchDeliveries,  
+         setListFilter, 
+         setDataLoading, 
+         toggleModal, 
+         showSpinner, 
+         hideSpinner,
+         setStatusMessage } from '../../actions/deliveryActions';
 import { compose, withProps } from "recompose";
 import StaticMap from '../StaticMap'
 import StatMap   from '../StatMap';
@@ -14,18 +20,33 @@ import openSocket from 'socket.io-client';
 let googleMapsKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
 let googleMapsURL = "https://maps.googleapis.com/maps/api/js?key=" + googleMapsKey + "&libraries=geometry,drawing,places";
 let socketURL     = process.env.NODE_ENV === "production" ? '' : 'http://localhost:5000'; 
-
+let socket = openSocket(socketURL);
 
 class DeliveryList extends Component {
 
-    constructor(props) { 
+  
+  constructor(props) { 
         super(props); 
         this.state = { 
           currentDelivery : null,
-          showStatusSpinner : false,
-          statusMessage   : ''
         }
         this.props.fetchDeliveries('P'); 
+        
+    }
+
+    
+
+    componentDidMount() { 
+      console.log(`DeliveryList[40]: ComponentDidMount`);
+        //After component is mounted,subscribe to new delivery request notifications
+        socket.on('new-request-created', () => {
+          console.log ("DeliveryList[43]: new-request-created"); 
+          this.props.setListFilter('P');
+          this.props.setDataLoading(true);
+          this.props.fetchDeliveries('P'); 
+          this.props.setDataLoading(false);
+        });
+        console.log("After Socket.on");
     }
 
     onChange = (e) => {
@@ -46,7 +67,7 @@ class DeliveryList extends Component {
                      {props.children}
                   </ModalBody>
                   <ModalFooter>
-                    { !this.state.showStatusSpinner && <Button color="primary" onClick={()=> this.onNotifyOffer(this.state.currentDelivery)}>Make Offer</Button> }
+                    { !this.props.showStatusSpinner && <Button color="primary" onClick={()=> this.onNotifyOffer(this.state.currentDelivery)}>Make Offer</Button> }
                     <Button color="primary" onClick={this.props.toggleModal}>Dismiss</Button>
                   </ModalFooter>
                 </Modal>)
@@ -62,24 +83,20 @@ class DeliveryList extends Component {
 
     //Executes when driver sends offer to customer.  Sends message to Delivery component indicating an offer to complete the shipment.
     onNotifyOffer = (delivery) => { 
-      const socket = openSocket(socketURL);
+      
       console.log ('Before emit for ' , `${delivery._id}`);
       socket.emit('delivery-offer', delivery._id); 
       
       //After offer message is sent, wait for customer to reply.
-      this.setState( { 
-        statusMessage     : "Waiting for customer to accept/reject offer.",
-        showStatusSpinner : true
-      });
+      this.props.setStatusMessage('Waiting for customer to accept/reject offer.');
+      this.props.showSpinner();
       
       //When acceptance response is received, remove the spinner and set status message.
       socket.on(`${delivery._id}-accepted`, (msg) => { 
         console.log('DeliveryList[77] : ', msg); 
-        this.setState ( {
-          showStatusSpinner : false,
-          statusMessage     : ' Offer was accepted, please proceed to the pick-up location.'
-        }); 
-      })
+        this.props.hideSpinner(); 
+        this.props.setStatusMessage("Offer was accepted, please proceed to the pick-up location.");
+      });
     }
 
 
@@ -154,12 +171,10 @@ class DeliveryList extends Component {
             <strong>Items: </strong><br></br> { this.state.currentDelivery.itemCount + " " + this.state.currentDelivery.itemDescription + ", weighting about " +  
                                       this.state.currentDelivery.itemWeight + this.state.currentDelivery.itemWeightUnits                        
                                       }
-                                      { this.state.statusMessage && 
-                                          <Alert className="mt-3" color="info" 
-                                                 toggle={ () => this.setState( { statusMessage : ''} ) }>
-                                            {this.state.showStatusSpinner && <span>  <Spinner type="grow" color="primary" /> </span>}
-                                            <span>  {this.state.statusMessage}</span>
-                                           
+                                      { this.props.statusMessage && 
+                                          <Alert className="mt-3" color="info">
+                                            {this.props.showStatusSpinner && <span>  <Spinner type="grow" color="primary" /> </span>}
+                                            <span>  {this.props.statusMessage}</span>
                                           </Alert>
                                       }
          </div>
@@ -191,15 +206,26 @@ DeliveryList.propTypes = {
     deliveries      : PropTypes.array.isRequired,
     filterValue     : PropTypes.string, 
     isDataLoading   : PropTypes.bool,
-    isModalOpen     : PropTypes.bool
-
+    isModalOpen     : PropTypes.bool,
+    statusMessage   : PropTypes.string,
+    showStatusSpinner : PropTypes.bool
 }
 
 const mapStateToProps = state => ( { 
     deliveries    : state.deliveryList.deliveries,
     filterValue   : state.deliveryList.filterValue, 
     isDataLoading : state.deliveryList.isLoading, 
-    isModalOpen   : state.deliveryList.isModalOpen
+    isModalOpen   : state.deliveryList.isModalOpen,
+    showStatusSpinner : state.deliveryList.showStatusSpinner,
+    statusMessage     : state.deliveryList.statusMessage
+
 });
 
-export default connect (mapStateToProps, { fetchDeliveries, setListFilter, setDataLoading, toggleModal})(DeliveryList);
+export default connect (mapStateToProps, 
+  { fetchDeliveries, 
+    setListFilter, 
+    setDataLoading, 
+    toggleModal,
+    showSpinner,
+    hideSpinner,
+    setStatusMessage })(DeliveryList);

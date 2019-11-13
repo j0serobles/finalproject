@@ -1,4 +1,12 @@
-import { SET_LIST_FILTER , GET_DELIVERIES, DATA_LOADING, TOGGLE_MODAL} from '../actions/types';
+import { 
+    SET_LIST_FILTER , 
+    GET_DELIVERIES, 
+    DATA_LOADING, 
+    TOGGLE_MODAL, 
+    SHOW_SPINNER,
+    HIDE_SPINNER,
+    SET_STATUS_MESSAGE
+    } from '../actions/types';
 
 const isEmpty = require('is-empty');
 
@@ -7,7 +15,9 @@ const initialState = {
     filterValue : "",
     isLoading   : false, 
     isModalOpen : false,
-    currentDelivery : null
+    currentDelivery : null,
+    statusMessage   : '',
+    showStatusSpinner : false
 }
 
 export default function(state = initialState, action){
@@ -31,8 +41,24 @@ export default function(state = initialState, action){
         case TOGGLE_MODAL:
             return {
                 ...state,
-                isModalOpen: !state.isModalOpen
+                isModalOpen:   !state.isModalOpen, 
+                statusMessage: ''
             };
+            case SHOW_SPINNER:
+                return {
+                    ...state,
+                    showStatusSpinner: true
+                };
+            case HIDE_SPINNER:
+                return {
+                     ...state,
+                     showStatusSpinner: false
+                };
+            case SET_STATUS_MESSAGE:
+                return {
+                  ...state,
+                  statusMessage : action.payload
+                };
         default:
             return state;
     }

@@ -56,7 +56,14 @@ io.on('connection' , socket => {
   socket.on('offer-accepted', deliveryId => {
     io.emit(`${deliveryId}-accepted`, `${deliveryId} Offer accepted`);
   });
+
+  socket.on('new-request-created', () => {
+    console.log (' New request created message received.'); 
+    io.emit(`new-request-created`)});
+
 });
+
+
 
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, 'client/build', 'index.html'))

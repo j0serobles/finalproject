@@ -14,7 +14,11 @@ const AppModal = (props) => {
   
   return (
     <div>
-      <Modal isOpen={props.modalState} toggle={props.toggle} className={props.className}>
+      <Modal isOpen={props.modalState} 
+             toggle={props.toggle} 
+             className={props.className}
+             backdrop={props.backdrop}
+             keyboard={props.keyboard}>
           {props.children}
       </Modal>
     </div>
