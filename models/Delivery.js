@@ -50,7 +50,7 @@ const DeliverySchema = new Schema({
         type: Schema.Types.ObjectId,
         required: false
     },
-    itemCount : {
+    itemAmount : {
         type: Number,
         required: false, 
         default: 1

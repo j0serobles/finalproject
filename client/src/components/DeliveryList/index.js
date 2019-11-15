@@ -9,7 +9,7 @@ import { fetchDeliveries,
          toggleModal, 
          showSpinner, 
          hideSpinner,
-         setStatusMessage } from '../../actions/deliveryActions';
+         setStatusMessage } from '../../actions/deliveryListActions';
 import { compose, withProps } from "recompose";
 import StaticMap from '../StaticMap'
 import StatMap   from '../StatMap';
@@ -44,6 +44,14 @@ class DeliveryList extends Component {
           this.props.setListFilter('P');
           this.props.setDataLoading(true);
           this.props.fetchDeliveries('P'); 
+          this.props.setDataLoading(false);
+        });
+
+        socket.on('request-changed', () => { 
+          console.log ("DeliveryList[51]: request-changed"); 
+          this.props.setListFilter('C');
+          this.props.setDataLoading(true);
+          this.props.fetchDeliveries('C'); 
           this.props.setDataLoading(false);
         });
         console.log("After Socket.on");

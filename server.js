@@ -61,6 +61,11 @@ io.on('connection' , socket => {
     console.log (' New request created message received.'); 
     io.emit(`new-request-created`)});
 
+  socket.on('request-changed', () => {
+      console.log (' A request changed message received.'); 
+      io.emit(`request-changed`)});
+  
+
 });
 
 

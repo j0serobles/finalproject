@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import PropTypes from 'prop-types'; 
+import { connect } from 'react-redux';
 import { geolocated } from "react-geolocated";
 import Map            from "../../components/Map";
 import AppDropdown    from "../../components/AppDropdown";
@@ -20,6 +22,9 @@ import { Form,
          ModalFooter,
          Spinner , 
         Alert} from 'reactstrap';
+
+import { cancelDelivery,
+         setCurrentDelivery } from '../../actions/deliveryActions';
 
 const os = require('os');
 
@@ -70,6 +75,7 @@ class Delivery extends React.Component {
   }
 
 
+
   DeliveryRequestDialog = () => { 
     console.log ("DeliveryRequestDialog[56]:  state.showDeliveryRequestDialog=" + this.state.showDeliveryRequestDialog);
     
@@ -91,12 +97,22 @@ class Delivery extends React.Component {
                   {currentMessage} 
                 </ModalBody>
                 <ModalFooter>
-                  <Button color="primary" onClick={this.toggleDeliveryRequestDialog}>Cancel Request</Button>{' '}
+                  <Button color="primary" onClick={ () => this.onCancelDelivery() }>Cancel Request</Button>{' '}
                 </ModalFooter>
              </AppModal>)
     } else { 
       return null;
     }
+  }
+
+
+  onCancelDelivery = () => {
+    this.props.cancelDelivery(this.state.deliveryId); 
+    this.toggleDeliveryRequestDialog();
+    this.setState( { statusMessage: "Your delivery request was cancelled." });
+    //Clear the message automatically after 10 seconds.
+    setTimeout ( () => this.setState ( { statusMessage : '' } ), 10000);
+    this.socket.emit('request-changed'); 
   }
 
 
@@ -150,6 +166,7 @@ class Delivery extends React.Component {
         axios.post('/api/delivery', newDelivery)
         .then( (res) => { 
           this.setState( { deliveryId : res.data._id } , console.log ('New delivery request saved.', res.data) ) ;
+          this.props.setCurrentDelivery(res.data); 
           return (res);
          }) 
         .then(  (res) => { 
@@ -359,10 +376,20 @@ class Delivery extends React.Component {
                 );
     }
 }
- 
-export default geolocated({
-    positionOptions: {
-        enableHighAccuracy: false,
+
+Delivery.propTypes = { 
+  cancelDelivery      : PropTypes.func.isRequired, 
+  setCurrentDelivery  : PropTypes.func.isRequired
+}
+
+const mapStateToProps = state => ( { 
+  currentDelivery   : state.delivery.currentDelivery,
+  storeErrorMessage : state.delivery.storeErrorMessage
+});
+
+export default connect (mapStateToProps,{ cancelDelivery, setCurrentDelivery })(geolocated({
+  positionOptions: {
+    enableHighAccuracy: false,
     },
     userDecisionTimeout: 5000,
-})(Delivery);
+  })(Delivery));
