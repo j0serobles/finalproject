@@ -210,16 +210,23 @@ class Map extends Component {
   * @param place
   */
  onOrigPlaceSelected = ( place ) => {
-   //console.log (`onOrigPlaceSelected: ` + JSON.stringify(place, '', 2));
+
+  
+   if (!place.address_components) {
+     return;
+   }
+   console.log (`onOrigPlaceSelected[213]: ` + JSON.stringify(place, '', 2));
+   console.log ('onOrigPlaceSelected[214]:', place.address_components); 
+
    const address  = place.formatted_address,
-     addressArray =  place.address_components,
+     addressArray = place.address_components,
      city         = this.getCity( addressArray ),
      area         = this.getArea( addressArray ),
      state        = this.getState( addressArray ),
      origPlaceId  = this.getPlaceId( place ),
      latValue     = place.geometry.location.lat(),
      lngValue     = place.geometry.location.lng();
-     
+
   // Set these values in the state.
     this.setState({
       origAddress : {
@@ -251,6 +258,11 @@ class Map extends Component {
   * @param place
   */
  onDestPlaceSelected = ( place ) => {
+
+  if (!place.address_components) {
+    return;
+  }
+  
   //console.log (`onDestPlaceSelected: ` + JSON.stringify(place, '', 2));
   const address  = place.formatted_address,
     addressArray =  place.address_components,

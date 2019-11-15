@@ -57,6 +57,10 @@ io.on('connection' , socket => {
     io.emit(`${deliveryId}-accepted`, `${deliveryId} Offer accepted`);
   });
 
+  socket.on('offer-rejected', deliveryId => {
+    io.emit(`${deliveryId}-rejected`, `${deliveryId} Offer rejected`);
+  });
+
   socket.on('new-request-created', () => {
     console.log (' New request created message received.'); 
     io.emit(`new-request-created`)});

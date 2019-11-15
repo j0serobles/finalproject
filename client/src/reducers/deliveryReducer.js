@@ -25,9 +25,7 @@ export default function(state = initialState, action){
         case CANCEL_DELIVERY: 
             return { 
                 ...state,
-                currentDelivery : { 
-                    status : 'C'
-                }
+                currentDelivery : null
             };
             case SET_ERROR:
             return {

@@ -30,35 +30,33 @@ class DeliveryList extends Component {
         this.state = { 
           currentDelivery : null,
         }
-        this.props.fetchDeliveries('P'); 
+        this.props.fetchDeliveries('A'); 
         
     }
-
-    
 
     componentDidMount() { 
       console.log(`DeliveryList[40]: ComponentDidMount`);
         //After component is mounted,subscribe to new delivery request notifications
         socket.on('new-request-created', () => {
           console.log ("DeliveryList[43]: new-request-created"); 
-          this.props.setListFilter('P');
+          this.props.setListFilter('A');
           this.props.setDataLoading(true);
-          this.props.fetchDeliveries('P'); 
+          this.props.fetchDeliveries('A'); 
           this.props.setDataLoading(false);
         });
 
         socket.on('request-changed', () => { 
           console.log ("DeliveryList[51]: request-changed"); 
-          this.props.setListFilter('C');
+          this.props.setListFilter('A');
           this.props.setDataLoading(true);
-          this.props.fetchDeliveries('C'); 
+          this.props.fetchDeliveries('A'); 
           this.props.setDataLoading(false);
         });
         console.log("After Socket.on");
     }
 
-    onChange = (e) => {
-        console.log (`onChange called. Event target name = ${e.target.name}, Event value is ${e.target.value}`);
+    onLOVChange = (e) => {
+        console.log (`onLOVChange called. Event target name = ${e.target.name}, Event value is ${e.target.value}`);
         this.props.setListFilter(e.target.value);
         this.props.setDataLoading(true);
         this.props.fetchDeliveries(e.target.value); 
@@ -95,7 +93,7 @@ class DeliveryList extends Component {
       console.log ('Before emit for ' , `${delivery._id}`);
       socket.emit('delivery-offer', delivery._id); 
       
-      //After offer message is sent, wait for customer to reply.
+      //After offer message is sent, wait for customer to reply.  Response can be either Accept or Reject.
       this.props.setStatusMessage('Waiting for customer to accept/reject offer.');
       this.props.showSpinner();
       
@@ -105,6 +103,15 @@ class DeliveryList extends Component {
         this.props.hideSpinner(); 
         this.props.setStatusMessage("Offer was accepted, please proceed to the pick-up location.");
       });
+
+      //When Reject response is received, remove the spinner and set status message.
+      socket.on(`${delivery._id}-rejected`, (msg) => { 
+        console.log('DeliveryList[109] : ', msg); 
+        this.props.hideSpinner(); 
+        this.props.setStatusMessage("Offer was not accepted.");
+      });
+
+      
     }
 
 
@@ -126,7 +133,8 @@ class DeliveryList extends Component {
                     <Col sm={10}>
                       <strong>Pick up at :</strong>         {delivery.origAddress}<br></br>
                       <strong>Deliver to :</strong>         {delivery.destAddress}<br></br>
-                      <strong>Item(s) Description:</strong> {delivery.itemDescription}           
+                      <strong>Item(s) Description:</strong> {delivery.itemDescription}, weighting about {delivery.itemWeight}{delivery.itemWeightUnits}. <br></br>
+                      <strong>Current status:</strong> {delivery.status}         
                     </Col>
                     <Col sm={2}>
                      <Button color="primary" className="align-middle mt-3" onClick={ () => this.handleButtonClick(delivery) }>Open</Button>
@@ -150,12 +158,13 @@ class DeliveryList extends Component {
         <FormGroup row>
             <Label for="deliveryStatus">Delivery Status</Label>
             <Col sm={4}>
-            <Input type="select" name="filterValue" id="deliveryStatus" value={this.props.filterValue} onChange={this.onChange} >
+            <Input type="select" name="filterValue" id="deliveryStatus" value={this.props.filterValue} onChange={this.onLOVChange} >
+            <option value="A">All</option>
             <option value="P">Pending</option>
-            <option value="A">Accepted</option>
+            <option value="C">Accepted</option>
             <option value="I">In Progress</option>
             <option value="D">Delivered</option>
-            <option value="C">Cancelled</option>
+            <option value="X">Cancelled</option>
             </Input>
             </Col>
         </FormGroup>
@@ -176,7 +185,7 @@ class DeliveryList extends Component {
             />
             <strong>Pick Up Address:</strong><br></br>  {this.state.currentDelivery.origAddress}<br></br>
             <strong>Delivery Address:</strong><br></br> {this.state.currentDelivery.destAddress}<br></br>
-            <strong>Items: </strong><br></br> { this.state.currentDelivery.itemCount + " " + this.state.currentDelivery.itemDescription + ", weighting about " +  
+            <strong>Items: </strong><br></br> { this.state.currentDelivery.itemAmount + " " + this.state.currentDelivery.itemDescription + ", weighting about " +  
                                       this.state.currentDelivery.itemWeight + this.state.currentDelivery.itemWeightUnits                        
                                       }
                                       { this.props.statusMessage && 

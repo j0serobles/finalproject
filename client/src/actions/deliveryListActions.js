@@ -53,9 +53,14 @@ export const setErrorMessage = (message) => {
 }
 
 export function fetchDeliveries(statusFilterString) { 
+
     return function(dispatch) {
        console.log ('fetchDeliveries action called. statusFilterString = ',  statusFilterString);  
-       const deliveriesURI = statusFilterString ? 'api/delivery/status/' + statusFilterString : 'api/delivery/';  
+
+       let deliveriesURI = statusFilterString ? 'api/delivery/status/' + statusFilterString : 'api/delivery/'; 
+       
+       if (statusFilterString === 'A') deliveriesURI = 'api/delivery/';
+
        axios.get(deliveriesURI)
        .then(deliveries => dispatch(
          {

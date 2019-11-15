@@ -9,8 +9,13 @@ const AppDropdown = (props) => {
   
     const toggle = () => setDropdownOpen(prevState => !prevState);
   
-    const listItems =  props.items.map( (listItemString, index) => 
-      <DropdownItem key={index} onClick={() => setUnitOfMeasure(listItemString)}>{listItemString}</DropdownItem> );
+    const listItems =  props.items.map( (listItemString, index) =>  <DropdownItem key={index} onClick={(e) => onDropDownClick(listItemString) }>{ listItemString }</DropdownItem>);
+
+    
+    const onDropDownClick = (listItemString) => {
+      setUnitOfMeasure(listItemString);
+      props.parentCallback(listItemString); 
+    }
 
     return (
 

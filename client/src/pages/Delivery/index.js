@@ -52,6 +52,7 @@ class Delivery extends React.Component {
     itemCount   : 1,
     itemDesc    : "",
     itemWeight  : 0, 
+    itemWeightUnits : 'lbs',
     errors      : {
       origAddress : '', 
       destAddress : '', 
@@ -66,12 +67,12 @@ class Delivery extends React.Component {
 
 }
 
-  toggleDeliveryRequestDialog = () => {
-    this.setState( {showDeliveryRequestDialog : !this.state.showDeliveryRequestDialog }) ; 
+  showDeliveryRequestDialog = (isOpen) => {
+    this.setState( {showDeliveryRequestDialog : isOpen }) ; 
   }
 
-  toggleDeliveryOfferDialog = () => {
-    this.setState( {showDeliveryOfferDialog : !this.state.showDeliveryOfferDialog }) ; 
+  showDeliveryOfferDialog = (isOpen) => {
+    this.setState( {showDeliveryOfferDialog : isOpen }) ; 
   }
 
 
@@ -97,7 +98,7 @@ class Delivery extends React.Component {
                   {currentMessage} 
                 </ModalBody>
                 <ModalFooter>
-                  <Button color="primary" onClick={ () => this.onCancelDelivery() }>Cancel Request</Button>{' '}
+                  <Button color="primary" onClick={ () => this.onCancelDelivery("Your request was cancelled.") }>Cancel Request</Button>{' '}
                 </ModalFooter>
              </AppModal>)
     } else { 
@@ -106,10 +107,11 @@ class Delivery extends React.Component {
   }
 
 
-  onCancelDelivery = () => {
+  onCancelDelivery = (message) => {
     this.props.cancelDelivery(this.state.deliveryId); 
-    this.toggleDeliveryRequestDialog();
-    this.setState( { statusMessage: "Your delivery request was cancelled." });
+    this.setState( { statusMessage: message });
+    this.showDeliveryRequestDialog(false);
+    this.showDeliveryOfferDialog(false);
     //Clear the message automatically after 10 seconds.
     setTimeout ( () => this.setState ( { statusMessage : '' } ), 10000);
     this.socket.emit('request-changed'); 
@@ -129,7 +131,7 @@ class Delivery extends React.Component {
                 <ModalBody> {dialogMessage} </ModalBody>
                 <ModalFooter>
                   <Button color="primary" onClick={this.acceptOffer}>Accept Offer</Button>{' '}
-                  <Button color="primary" onClick={this.toggleDeliveryOfferDialog}>Cancel Request</Button>{' '}
+                  <Button color="primary" onClick={ () => this.onRejectOffer("Request cancelled.  The driver's offer was not accepted. ") }>Cancel Request</Button>{' '}
                 </ModalFooter>
              </AppModal>)
     } else { 
@@ -154,7 +156,7 @@ class Delivery extends React.Component {
               "status"            : "P", 
               "itemDescription"   : this.state.itemDesc,
               "itemWeight"        : this.state.itemWeight,
-              "itemWeightUnits"   : '',
+              "itemWeightUnits"   : this.state.itemWeightUnits,
               "itemVolume"        : null, 
               "itemVolUnits"      : '',
               "totalCost"         : "0",
@@ -270,11 +272,24 @@ class Delivery extends React.Component {
     //Send message indicating the acceptance, then take user 
     // to the delivery tracker page.
     this.socket.emit('offer-accepted', this.state.deliveryId); 
-    this.toggleDeliveryOfferDialog(); 
+    this.showDeliveryOfferDialog(false); 
     this.setState ( { 
         statusMessage: ` Please meet the driver at the designated pick up location: ${this.state.origAddress}`
       });
   }
+
+  onRejectOffer = (message) => { 
+    //Customer has rejected the offer for delivery service.
+    //Send message indicating the rejection, then take user 
+    // to the delivery tracker page.
+    this.socket.emit('offer-rejected', this.state.deliveryId); 
+    this.showDeliveryOfferDialog(false); 
+    this.setState ( { 
+        statusMessage: message
+      });
+  }
+
+  setUnitOfMeasure =  (weigthUOM) => this.setState({ itemWeightUnits : weigthUOM });
 
 
 
@@ -294,13 +309,15 @@ class Delivery extends React.Component {
                 ) :   this.props.coords ? ( 
                      <div className="container">
 
-                       <Row className="mt-3">
-                         <Col>
-                         <StatusMessage />
-                         </Col>
-                       </Row>
+                      
+                        <Row className="mt-3">
+                          <Col>
+                          <StatusMessage />
+                          </Col>
+                        </Row>
+                        
   
-                       <Row className="mt-3">
+                       <Row className="mt-1">
                          <Col sm={12}>
                             <Map
                               google={this.props.google}
@@ -355,7 +372,7 @@ class Delivery extends React.Component {
                                             onChange={this.handleInputChange}
                                       />
                                       <InputGroupAddon addonType="append">
-                                        <AppDropdown items={['lbs','kg', 'gm', 'oz','lt']} />
+                                        <AppDropdown items={['lbs','kg', 'gm', 'oz','lt']} parentCallback={ this.setUnitOfMeasure }/>
                                       </InputGroupAddon>
                                     </InputGroup>
                                     {errors.itemWeight.length > 0 && <span className="error">{errors.itemWeight}</span>}

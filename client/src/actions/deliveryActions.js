@@ -40,7 +40,7 @@ export const cancelDelivery = (deliveryId) =>
     dispatch => {
         console.log ("cancelDelivery called, ID: " , deliveryId);
         const cancelURL = `/api/delivery/${deliveryId}`;
-        const userData  = { "status" : "C" } ; 
+        const userData  = { "status" : "X" } ; 
         axios.put(cancelURL, userData).then(res => {
             dispatch(setDataLoading(true)); 
             dispatch(setDeliveryCancelled());
