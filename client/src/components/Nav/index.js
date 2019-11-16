@@ -11,25 +11,8 @@ function Nav() {
   //         <NavLink to="/home" className="nav-link">
   //           Home
   //         </NavLink>
-        
-        
-        
   //       </li>
-  //       <li className="nav-item">
-  //         <NavLink
-  //           to="/delivery"
-  //           className="nav-link">
-  //           New Delivery
-  //         </NavLink>
-  //       </li>
-  //       <li className="nav-item">
-  //         <NavLink
-  //           to="/deliveries"
-  //           className="nav-link">
-  //           Delivery List
-  //         </NavLink>
-  //       </li>
-  //       <li className="nav-item">
+         // <li className="nav-item">
   //         <NavLink
   //           to="/about"
   //           className="nav-link"
@@ -81,7 +64,6 @@ return(
   <div className="collapse navbar-collapse" id="navbarSupportedContent">
     <ul className="navbar-nav mr-auto">
       <li className="nav-item active">
-
       <NavLink
         to="/about"
         className="nav-link">About Us
@@ -95,6 +77,22 @@ return(
       <li className="nav-item">
         <a className="nav-link" href="#">Contact Us</a>
       </li>
+
+      <li className="nav-item">
+          <NavLink
+            to="/delivery"
+            className="nav-link">
+            New Delivery
+          </NavLink>
+      </li>
+     <li className="nav-item">
+          <NavLink
+            to="/deliveries"
+            className="nav-link">
+            Delivery List
+          </NavLink>
+      </li>
+
 
         <li>
           <Dropdown nav isOpen={dropdownOpen} toggle={toggle}>

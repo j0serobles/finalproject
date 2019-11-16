@@ -46,7 +46,7 @@ class DeliveryList extends Component {
         });
 
         socket.on('request-changed', () => { 
-          console.log ("DeliveryList[51]: request-changed"); 
+          console.log ("DeliveryList[49]: request-changed"); 
           this.props.setListFilter('A');
           this.props.setDataLoading(true);
           this.props.fetchDeliveries('A'); 
@@ -73,7 +73,7 @@ class DeliveryList extends Component {
                      {props.children}
                   </ModalBody>
                   <ModalFooter>
-                    { this.props.currentDelivery.status = 'P' && <Button color="primary" onClick={()=> this.onNotifyOffer(this.state.currentDelivery)}>Make Offer</Button> }
+                    { this.state.currentDelivery.status === 'P' && <Button color="primary" onClick={()=> this.onNotifyOffer(this.state.currentDelivery)}>Make Offer</Button> }
                     <Button color="primary" onClick={this.props.toggleModal}>Dismiss</Button>
                   </ModalFooter>
                 </Modal>)
@@ -107,6 +107,7 @@ class DeliveryList extends Component {
       //When Reject response is received, remove the spinner and set status message.
       socket.on(`${delivery._id}-rejected`, (msg) => { 
         console.log('DeliveryList[109] : ', msg); 
+        this.state.currentDelivery.status = 'X';
         this.props.hideSpinner(); 
         this.props.setStatusMessage("Offer was not accepted.");
       });

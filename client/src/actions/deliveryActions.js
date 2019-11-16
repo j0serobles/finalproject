@@ -7,6 +7,7 @@ import {  DATA_LOADING,
           SET_ERROR  
 } from './types';
 
+
 export const setDataLoading = (isLoading) => {
     return {
         type: DATA_LOADING,
@@ -39,17 +40,14 @@ export const cancelDelivery = (deliveryId) =>
     
     dispatch => {
         console.log ("cancelDelivery called, ID: " , deliveryId);
+        const socketURL = process.env.NODE_ENV === "production" ? '' : 'http://localhost:5000';  
+        const socket = openSocket(socketURL);
         const cancelURL = `/api/delivery/${deliveryId}`;
         const userData  = { "status" : "X" } ; 
         axios.put(cancelURL, userData).then(res => {
             dispatch(setDataLoading(true)); 
             dispatch(setDeliveryCancelled());
-            dispatch(setDataLoading(false)); 
+            dispatch(setDataLoading(false));
+            socket.emit('request-changed'); 
         }).catch(err => dispatch(setErrorMessage(err.response.data)));
     };
-
-
-      
-      
-      
-    

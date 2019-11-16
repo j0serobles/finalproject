@@ -109,12 +109,13 @@ class Delivery extends React.Component {
 
   onCancelDelivery = (message) => {
     this.props.cancelDelivery(this.state.deliveryId); 
-    this.setState( { statusMessage: message });
+    this.socket.emit('request-changed');
     this.showDeliveryRequestDialog(false);
     this.showDeliveryOfferDialog(false);
+    this.setState( { statusMessage: message });
     //Clear the message automatically after 10 seconds.
     setTimeout ( () => this.setState ( { statusMessage : '' } ), 10000);
-    this.socket.emit('request-changed'); 
+     
   }
 
 
@@ -283,10 +284,8 @@ class Delivery extends React.Component {
     //Send message indicating the rejection, then take user 
     // to the delivery tracker page.
     this.socket.emit('offer-rejected', this.state.deliveryId); 
-    this.showDeliveryOfferDialog(false); 
-    this.setState ( { 
-        statusMessage: message
-      });
+    this.showDeliveryOfferDialog(false);
+    this.onCancelDelivery(message); 
   }
 
   setUnitOfMeasure =  (weigthUOM) => this.setState({ itemWeightUnits : weigthUOM });
