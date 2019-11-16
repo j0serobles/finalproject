@@ -73,7 +73,7 @@ class DeliveryList extends Component {
                      {props.children}
                   </ModalBody>
                   <ModalFooter>
-                    { !this.props.showStatusSpinner && <Button color="primary" onClick={()=> this.onNotifyOffer(this.state.currentDelivery)}>Make Offer</Button> }
+                    { this.props.currentDelivery.status = 'P' && <Button color="primary" onClick={()=> this.onNotifyOffer(this.state.currentDelivery)}>Make Offer</Button> }
                     <Button color="primary" onClick={this.props.toggleModal}>Dismiss</Button>
                   </ModalFooter>
                 </Modal>)

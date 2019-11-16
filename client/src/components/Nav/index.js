@@ -1,5 +1,6 @@
-import React from "react";
-import { Link, NavLink} from "react-router-dom";
+import React, { useState } from 'react';
+import { Link, NavLink  } from "react-router-dom";
+import { Dropdown, DropdownToggle, DropdownMenu,DropdownItem } from 'reactstrap'
 
 function Nav() {
   // return (
@@ -59,6 +60,8 @@ function Nav() {
   
   // );
 
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const toggle = () => setDropdownOpen(!dropdownOpen);
 
 return(
 <div> 
@@ -88,22 +91,30 @@ return(
 
     {/* <span className="sr-only">(current)</span> */}
       </li>
+
       <li className="nav-item">
         <a className="nav-link" href="#">Contact Us</a>
       </li>
-      <li className="nav-item dropdown">
-        
-      <div className="dropdown">
-        <a className="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Services
-        </a>
-        <div className="dropdown-menu" aria-labelledby="navbarDropdown">
-          <a className="dropdown-item" href="#lastMile">Service 1</a>
-          <a className="dropdown-item" href="#">Service 2</a>
-          <a className="dropdown-item" href="#">Service 3</a>
-        </div>
-      </div>
-    </li>     
+
+        <li>
+          <Dropdown nav isOpen={dropdownOpen} toggle={toggle}>
+            <DropdownToggle nav caret>
+              Services
+            </DropdownToggle>
+            <DropdownMenu>
+              <DropdownItem>
+                <a href="/home/#lastMile">Last Mile Delivery</a>
+              </DropdownItem>
+              <DropdownItem>
+                <a href="/home/#sameDayRetail">Same Day Retail</a>
+              </DropdownItem>
+              <DropdownItem>
+                <a href="/home/#conventionServices">Convention Services</a>
+              </DropdownItem>
+            </DropdownMenu>
+        </Dropdown>
+        </li>
+
     </ul>
     <form className="form-inline my-2 my-lg-0">
       <input className="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search"/>
