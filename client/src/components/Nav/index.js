@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, NavLink  } from "react-router-dom";
-import { Dropdown, DropdownToggle, DropdownMenu,DropdownItem } from 'reactstrap'
+import { Dropdown, DropdownToggle, DropdownMenu,DropdownItem, Button } from 'reactstrap'
+import './style.css';
 
 function Nav() {
   // return (
@@ -113,12 +114,24 @@ return(
         </Dropdown>
         </li>
 
+        <li className="nav-item">
+          <NavLink
+            to="/logout"
+            className="nav-link">
+            Log Out
+          </NavLink>
+      </li>
+
     </ul>
-    <form className="form-inline my-2 my-lg-0">
-      <input className="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search"/>
-        <button className="btn btn-outline-success my-2 my-sm-0" type="submit">
-         Search</button>
-    </form>
+ 
+  
+        <NavLink id="login-link" to="/login">
+          <button id="loginButton" className="btn btn-outline-success my-2 my-sm-0" type="submit">Login</button>
+        </NavLink>
+        <NavLink to="/register">
+          <button className="btn btn-outline-success my-2 my-sm-0" type="submit">Register</button>
+        </NavLink>
+
   </div>
 </nav>
 

@@ -3,21 +3,6 @@ import "./style.css";
 import guyImage from "./Guy_Delivering_Pkg.jpg";
 import eventImage from "./Event_Services_Hall.png";
 import womanImage from "./Woman_With_Lots_of_Bags.jpg";
-import { Link } from "react-router-dom";
-import  {
-    Collapse,
-    Navbar,
-    NavbarToggler,
-    NavbarBrand,
-    Nav,
-    NavItem,
-    NavLink,
-    Container,
-    Row,
-    Col,
-    Jumbotron,
-    Button
-} from 'reactstrap';
 
 class Landing extends Component {
   render() {
@@ -25,13 +10,12 @@ class Landing extends Component {
   <div>
   <div className="jumbotron jumbotron-fluid" id="main">
     <div className="container">
-      {/* <h1 className="display-4">MERN BABY BERN</h1> */}
-      {/* <p className="lead">This is where we'll have our slogan / maybe "Get a quote" button and background.</p> */}
       <br></br><br></br>
       <div className="row">
         <div className="col-sm-7">     
         </div>
         <div className="col-sm-5 text-center" id="col-4">
+          <br></br><br></br><br></br><br></br><br></br><br></br>
           <a className="btn btn-primary btn-success" href="#" role="button">Get a Quote</a>
         </div>
       </div>    
