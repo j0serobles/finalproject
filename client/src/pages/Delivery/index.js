@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import PropTypes from 'prop-types'; 
+import { connect } from 'react-redux';
 import { geolocated } from "react-geolocated";
 import Map            from "../../components/Map";
 import AppDropdown    from "../../components/AppDropdown";
@@ -20,6 +22,9 @@ import { Form,
          ModalFooter,
          Spinner , 
         Alert} from 'reactstrap';
+
+import { cancelDelivery,
+         setCurrentDelivery } from '../../actions/deliveryActions';
 
 const os = require('os');
 
@@ -47,6 +52,7 @@ class Delivery extends React.Component {
     itemCount   : 1,
     itemDesc    : "",
     itemWeight  : 0, 
+    itemWeightUnits : 'lbs',
     errors      : {
       origAddress : '', 
       destAddress : '', 
@@ -61,13 +67,14 @@ class Delivery extends React.Component {
 
 }
 
-  toggleDeliveryRequestDialog = () => {
-    this.setState( {showDeliveryRequestDialog : !this.state.showDeliveryRequestDialog }) ; 
+  showDeliveryRequestDialog = (isOpen) => {
+    this.setState( {showDeliveryRequestDialog : isOpen }) ; 
   }
 
-  toggleDeliveryOfferDialog = () => {
-    this.setState( {showDeliveryOfferDialog : !this.state.showDeliveryOfferDialog }) ; 
+  showDeliveryOfferDialog = (isOpen) => {
+    this.setState( {showDeliveryOfferDialog : isOpen }) ; 
   }
+
 
 
   DeliveryRequestDialog = () => { 
@@ -91,12 +98,23 @@ class Delivery extends React.Component {
                   {currentMessage} 
                 </ModalBody>
                 <ModalFooter>
-                  <Button color="primary" onClick={this.toggleDeliveryRequestDialog}>Cancel Request</Button>{' '}
+                  <Button color="primary" onClick={ () => this.onCancelDelivery("Your request was cancelled.") }>Cancel Request</Button>{' '}
                 </ModalFooter>
              </AppModal>)
     } else { 
       return null;
     }
+  }
+
+
+  onCancelDelivery = (message) => {
+    this.props.cancelDelivery(this.state.deliveryId); 
+    this.setState( { statusMessage: message });
+    this.showDeliveryRequestDialog(false);
+    this.showDeliveryOfferDialog(false);
+    //Clear the message automatically after 10 seconds.
+    setTimeout ( () => this.setState ( { statusMessage : '' } ), 10000);
+    this.socket.emit('request-changed'); 
   }
 
 
@@ -113,7 +131,7 @@ class Delivery extends React.Component {
                 <ModalBody> {dialogMessage} </ModalBody>
                 <ModalFooter>
                   <Button color="primary" onClick={this.acceptOffer}>Accept Offer</Button>{' '}
-                  <Button color="primary" onClick={this.toggleDeliveryOfferDialog}>Cancel Request</Button>{' '}
+                  <Button color="primary" onClick={ () => this.onRejectOffer("Request cancelled.  The driver's offer was not accepted. ") }>Cancel Request</Button>{' '}
                 </ModalFooter>
              </AppModal>)
     } else { 
@@ -138,7 +156,7 @@ class Delivery extends React.Component {
               "status"            : "P", 
               "itemDescription"   : this.state.itemDesc,
               "itemWeight"        : this.state.itemWeight,
-              "itemWeightUnits"   : '',
+              "itemWeightUnits"   : this.state.itemWeightUnits,
               "itemVolume"        : null, 
               "itemVolUnits"      : '',
               "totalCost"         : "0",
@@ -150,6 +168,7 @@ class Delivery extends React.Component {
         axios.post('/api/delivery', newDelivery)
         .then( (res) => { 
           this.setState( { deliveryId : res.data._id } , console.log ('New delivery request saved.', res.data) ) ;
+          this.props.setCurrentDelivery(res.data); 
           return (res);
          }) 
         .then(  (res) => { 
@@ -253,11 +272,24 @@ class Delivery extends React.Component {
     //Send message indicating the acceptance, then take user 
     // to the delivery tracker page.
     this.socket.emit('offer-accepted', this.state.deliveryId); 
-    this.toggleDeliveryOfferDialog(); 
+    this.showDeliveryOfferDialog(false); 
     this.setState ( { 
         statusMessage: ` Please meet the driver at the designated pick up location: ${this.state.origAddress}`
       });
   }
+
+  onRejectOffer = (message) => { 
+    //Customer has rejected the offer for delivery service.
+    //Send message indicating the rejection, then take user 
+    // to the delivery tracker page.
+    this.socket.emit('offer-rejected', this.state.deliveryId); 
+    this.showDeliveryOfferDialog(false); 
+    this.setState ( { 
+        statusMessage: message
+      });
+  }
+
+  setUnitOfMeasure =  (weigthUOM) => this.setState({ itemWeightUnits : weigthUOM });
 
 
 
@@ -277,13 +309,15 @@ class Delivery extends React.Component {
                 ) :   this.props.coords ? ( 
                      <div className="container">
 
-                       <Row className="mt-3">
-                         <Col>
-                         <StatusMessage />
-                         </Col>
-                       </Row>
+                      
+                        <Row className="mt-3">
+                          <Col>
+                          <StatusMessage />
+                          </Col>
+                        </Row>
+                        
   
-                       <Row className="mt-3">
+                       <Row className="mt-1">
                          <Col sm={12}>
                             <Map
                               google={this.props.google}
@@ -338,7 +372,7 @@ class Delivery extends React.Component {
                                             onChange={this.handleInputChange}
                                       />
                                       <InputGroupAddon addonType="append">
-                                        <AppDropdown items={['lbs','kg', 'gm', 'oz','lt']} />
+                                        <AppDropdown items={['lbs','kg', 'gm', 'oz','lt']} parentCallback={ this.setUnitOfMeasure }/>
                                       </InputGroupAddon>
                                     </InputGroup>
                                     {errors.itemWeight.length > 0 && <span className="error">{errors.itemWeight}</span>}
@@ -359,10 +393,20 @@ class Delivery extends React.Component {
                 );
     }
 }
- 
-export default geolocated({
-    positionOptions: {
-        enableHighAccuracy: false,
+
+Delivery.propTypes = { 
+  cancelDelivery      : PropTypes.func.isRequired, 
+  setCurrentDelivery  : PropTypes.func.isRequired
+}
+
+const mapStateToProps = state => ( { 
+  currentDelivery   : state.delivery.currentDelivery,
+  storeErrorMessage : state.delivery.storeErrorMessage
+});
+
+export default connect (mapStateToProps,{ cancelDelivery, setCurrentDelivery })(geolocated({
+  positionOptions: {
+    enableHighAccuracy: false,
     },
     userDecisionTimeout: 5000,
-})(Delivery);
+  })(Delivery));

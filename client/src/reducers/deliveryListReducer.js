@@ -5,7 +5,8 @@ import {
     TOGGLE_MODAL, 
     SHOW_SPINNER,
     HIDE_SPINNER,
-    SET_STATUS_MESSAGE
+    SET_STATUS_MESSAGE, 
+    SET_ERROR
     } from '../actions/types';
 
 const isEmpty = require('is-empty');
@@ -17,7 +18,8 @@ const initialState = {
     isModalOpen : false,
     currentDelivery : null,
     statusMessage   : '',
-    showStatusSpinner : false
+    showStatusSpinner : false, 
+    currentErrorMessage : ''
 }
 
 export default function(state = initialState, action){
@@ -59,6 +61,11 @@ export default function(state = initialState, action){
                   ...state,
                   statusMessage : action.payload
                 };
+                case SET_ERROR:
+                return { 
+                        ...state, 
+                        currentErrorMessage : action.payload
+                    }
         default:
             return state;
     }
