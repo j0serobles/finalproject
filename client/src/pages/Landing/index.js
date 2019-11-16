@@ -26,7 +26,7 @@ class Landing extends Component {
   <div className="container">
     <div className="row">
       <div className="col-sm">               
-        <div className="card" style={{"width": "18rem;"}} >
+        <div className="card" style={{"width": "18rem"}} >
           <a href="#"><img src={guyImage} className="card-img-top" alt="..."></img></a>
           <div className="card-body">
             <h5 className="card-title" id="lastMile">Last Mile Delivery </h5>
@@ -41,7 +41,7 @@ class Landing extends Component {
           <a href="#"><img src={womanImage} className="card-img-top" alt="..."></img></a>
           <div className="card-body">
             <h5 className="card-title" id="sameDayRetail">Same Day Retail</h5>
-                          <p class="card-text">When you’re busy shopping at the mall or online at your favorite store and have something you need delivered to your hotel, your agent at the airport or simply to a friend or family member. We’ll pick it up at the retail store and deliver it no questions asked. We’ll get it to where you need it! </p>
+                          <p className="card-text">When you’re busy shopping at the mall or online at your favorite store and have something you need delivered to your hotel, your agent at the airport or simply to a friend or family member. We’ll pick it up at the retail store and deliver it no questions asked. We’ll get it to where you need it! </p>
             <p className="card-text"></p>
             <a href="#" className="btn btn-primary">Get a Quote</a>
           </div>
@@ -49,7 +49,7 @@ class Landing extends Component {
       </div>
       
       <div className="col-sm">
-        <div className="card" style={{"width": "18rem;"}}>
+        <div className="card" style={{"width": "18rem"}}>
           <a href="#"><img src={eventImage} className="card-img-top" alt="..."></img></a>
           <div className="card-body">
             <h5 className="card-title" id="conventionServices">Convention Services</h5>

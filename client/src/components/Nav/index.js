@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, NavLink  } from "react-router-dom";
-import { Dropdown, DropdownToggle, DropdownMenu,DropdownItem, Button } from 'reactstrap'
+import { Dropdown, DropdownToggle, DropdownMenu,DropdownItem, Button } from 'reactstrap';
+
 import './style.css';
 
 function Nav() {
@@ -64,19 +65,19 @@ return(
             
   <div className="collapse navbar-collapse" id="navbarSupportedContent">
     <ul className="navbar-nav mr-auto">
+
       <li className="nav-item active">
       <NavLink
         to="/about"
         className="nav-link">About Us
       </NavLink>
-        {/* <a className="nav-link" href="about2.html">About Us */}
-          {/* </a> */}
-
-    {/* <span className="sr-only">(current)</span> */}
       </li>
 
-      <li className="nav-item">
-        <a className="nav-link" href="#">Contact Us</a>
+      <li className="nav-item active">
+      <NavLink
+        to="/contact"
+        className="nav-link">Contact Us
+      </NavLink>
       </li>
 
       <li className="nav-item">
@@ -86,6 +87,7 @@ return(
             New Delivery
           </NavLink>
       </li>
+
      <li className="nav-item">
           <NavLink
             to="/deliveries"
@@ -95,7 +97,7 @@ return(
       </li>
 
 
-        <li>
+
           <Dropdown nav isOpen={dropdownOpen} toggle={toggle}>
             <DropdownToggle nav caret>
               Services
@@ -112,7 +114,7 @@ return(
               </DropdownItem>
             </DropdownMenu>
         </Dropdown>
-        </li>
+  
 
         <li className="nav-item">
           <NavLink
