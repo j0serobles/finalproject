@@ -108,14 +108,13 @@ class Delivery extends React.Component {
 
 
   onCancelDelivery = (message) => {
-    this.props.cancelDelivery(this.state.deliveryId); 
-    this.socket.emit('request-changed');
+    console.log ("onCancelDelivery[111]", message); 
+    this.props.cancelDelivery(this.state.deliveryId) 
     this.showDeliveryRequestDialog(false);
     this.showDeliveryOfferDialog(false);
     this.setState( { statusMessage: message });
     //Clear the message automatically after 10 seconds.
     setTimeout ( () => this.setState ( { statusMessage : '' } ), 10000);
-     
   }
 
 
