@@ -22,43 +22,7 @@ import  {
 class Landing extends Component {
   render() {
     return (
-<div>
-  <nav className="navbar navbar-expand-lg navbar-light bg-light">
-  <a className="navbar-brand" href="#">MERN BABY MERN</a>
-  <button className="navbar-toggler" type="button" data-toggle="collapse" 
-    data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-    <span className="navbar-toggler-icon"></span>
-  </button>
-              
-  <div className="collapse navbar-collapse" id="navbarSupportedContent">
-    <ul className="navbar-nav mr-auto">
-      <li className="nav-item active">
-        <a className="nav-link" href="#">About Us
-        <span className="sr-only">(current)</span></a>
-      </li>
-      <li className="nav-item">
-        <a className="nav-link" href="#">Contact Us</a>
-      </li>
-      <li className="nav-item dropdown">
-        <div className="dropdown">
-          <a className="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Services
-          </a>
-          <div className="dropdown-menu" aria-labelledby="navbarDropdown">
-            <a className="dropdown-item" href="#">Service 1</a>
-            <a className="dropdown-item" href="#">Service 2</a>
-            <a className="dropdown-item" href="#">Service 3</a>
-          </div>
-        </div>
-      </li>    
-    </ul>
-    <form className="form-inline my-2 my-lg-0">
-      <input className="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search"/>
-        <button className="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-    </form>
-  </div>
-</nav> {/* close navebar    */}
-  
+  <div>
   <div className="jumbotron jumbotron-fluid" id="main">
     <div className="container">
       <h1 className="display-4">MERN BABY BERN</h1>
@@ -82,8 +46,8 @@ class Landing extends Component {
           <a href="#"><img src={guyImage} className="card-img-top" alt="..."></img></a>
           <div className="card-body">
             <h5 className="card-title">Last Mile Delivery </h5>
-            <p className="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-            <a href="#" className="btn btn-primary">Go somewhere</a>
+            <p className="card-text">Our Last Mile Delivery service takes away your stress of dealing with excuses and failed attempts by other companies.  We’ll pick up your shipment anywhere in the Central Florida market and have to you in time and on time. No excuses and no more stress!</p>
+            <a href="#" className="btn btn-primary">Get a Quote</a>
           </div>
         </div>
       </div>
@@ -93,8 +57,9 @@ class Landing extends Component {
           <a href="#"><img src={womanImage} className="card-img-top" alt="..."></img></a>
           <div className="card-body">
             <h5 className="card-title">Same Day Retail</h5>
-            <p className="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.Some quick example text to build on the</p>
-            <a href="#" className="btn btn-primary">Go somewhere</a>
+                          <p class="card-text">When you’re busy shopping at the mall or online at your favorite store and have something you need delivered to your hotel, your agent at the airport or simply to a friend or family member. We’ll pick it up at the retail store and deliver it no questions asked. We’ll get it to where you need it! </p>
+            <p className="card-text"></p>
+            <a href="#" className="btn btn-primary">Get a Quote</a>
           </div>
         </div>
       </div>
@@ -104,14 +69,14 @@ class Landing extends Component {
           <a href="#"><img src={eventImage} className="card-img-top" alt="..."></img></a>
           <div className="card-body">
             <h5 className="card-title">Convention Services</h5>
-            <p className="card-text">Some quick example text to build on the card title and make up the bulk of the card's content. Some quick example text to build on the card.</p>
-            <a href="#" className="btn btn-primary">Go somewhere</a>
+            <p className="card-text">Our Brand New “Convention Services” delivery can save the day. When you need that special item or missing piece of your booth, marketing materials, or whatever is needed to save your tradeshow - you can count on us to save the day. We know the business, the locations and how to get in and out in no time flat! </p>
+            <a href="#" className="btn btn-primary">Get a Quote</a>
           </div>
         </div>
       </div>
     </div>
   </div>
-</div>);
+</div>);  
   }
 }
 export default Landing;

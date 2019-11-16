@@ -27,7 +27,7 @@ class About extends React.Component {
                             <p><strong>VISION:</strong>Our vision to ensure customer satisfaction every time</p>
                     </div>    
                     <br></br>
-                    <button className="btn btn-default btn-lg">Get in Touch</button>
+                    {/* <button className="btn btn-default btn-lg">Get in Touch</button> */}
                 </div>
               </div> 
 
