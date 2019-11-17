@@ -1,10 +1,18 @@
 import React, { useState } from 'react';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import { Link, NavLink  } from "react-router-dom";
-import { Dropdown, DropdownToggle, DropdownMenu,DropdownItem, Button } from 'reactstrap';
+import { Dropdown, 
+  DropdownToggle, 
+  DropdownMenu,
+  DropdownItem, 
+  Button, 
+  Row,
+  Col } from 'reactstrap';
 
 import './style.css';
 
-function Nav() {
+function Nav(props) {
   // return (
   //   <nav className="navbar navbar-expand-lg navbar-light bg-light">
   //     <ul className="nav nav-tabs">
@@ -48,6 +56,9 @@ function Nav() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const toggle = () => setDropdownOpen(!dropdownOpen);
 
+  console.log (props);
+  const userName = props.auth.user.name;
+
 return(
 <div> 
   <nav className="navbar navbar-expand-lg navbar-light bg-light">
@@ -80,6 +91,7 @@ return(
       </NavLink>
       </li>
 
+      { props.auth.isAuthenticated  && (
       <li className="nav-item">
           <NavLink
             to="/delivery"
@@ -87,7 +99,9 @@ return(
             New Delivery
           </NavLink>
       </li>
+      )}
 
+      { props.auth.isAuthenticated  && (
      <li className="nav-item">
           <NavLink
             to="/deliveries"
@@ -95,6 +109,7 @@ return(
             Delivery List
           </NavLink>
       </li>
+      )}
 
 
 
@@ -116,23 +131,33 @@ return(
         </Dropdown>
   
 
-        <li className="nav-item">
-          <NavLink
-            to="/logout"
-            className="nav-link">
-            Log Out
-          </NavLink>
-      </li>
+      
 
     </ul>
+
+     
+    { props.auth.isAuthenticated  && (
+    <div>
+      <div id="user-name" className="small" >Logged in as: {userName}</div>
+      <NavLink id="logoutButton"
+        to="/logout"
+        className="nav-link">
+        <button  className="btn btn-outline-success my-2 my-sm-0 ml-3 " type="submit">Log Out</button>
+      </NavLink>
+    </div>
+    )
+    }
  
-  
+     { !props.auth.isAuthenticated  && (
+       <div>
         <NavLink id="login-link" to="/login">
           <button id="loginButton" className="btn btn-outline-success my-2 my-sm-0" type="submit">Login</button>
         </NavLink>
         <NavLink to="/register">
           <button className="btn btn-outline-success my-2 my-sm-0" type="submit">Register</button>
         </NavLink>
+        </div>)
+     }
 
   </div>
 </nav>
@@ -141,4 +166,14 @@ return(
 );
 
 }
-export default Nav;
+
+
+Nav.propTypes = {
+  auth: PropTypes.object.isRequired
+};
+
+const mapStateToProps = state => ({
+  auth: state.auth
+});
+
+export default connect(mapStateToProps)(Nav);
