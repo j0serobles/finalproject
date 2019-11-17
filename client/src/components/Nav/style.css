@@ -5,3 +5,13 @@
 #login-link {
     margin-right: 10px;
 }
+
+#logoutButton {
+    float: right;
+}
+
+#user-name {
+    
+    padding-top : 15px;
+    float:left;
+}
