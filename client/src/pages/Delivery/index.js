@@ -351,54 +351,56 @@ class Delivery extends React.Component {
                             />
                           </Col>
                         </Row>
-                        <Row id="deliveryRequestForm">
-                         <Col sm={12}>
-                            <Form>
-                                <FormGroup row>
-                                  <Col>
-                                    <InputGroup >
-                                      <InputGroupAddon addonType="prepend">Amount</InputGroupAddon>
-                                      <Input type="text" 
-                                            value={this.state.itemCount} 
-                                            onChange={this.handleInputChange}
-                                            name="itemCount"
-                                            />
-                                    </InputGroup>
-                                    {errors.itemCount.length > 0 && <span className="error">{errors.itemCount}</span>}
-                                  </Col>
-                                  <Col>
-                                  <InputGroup >
-                                    <InputGroupAddon addonType="prepend">Description</InputGroupAddon>
-                                    <Input type="text" 
-                                           value={this.state.itemDesc} 
-                                           onChange={this.handleInputChange}
-                                           name="itemDesc"
-                                    />
-                                    </InputGroup>
-                                    {errors.itemDesc.length > 0 && <span className="error">{errors.itemDesc}</span>}
-                                  </Col>
-                                  <Col>
-                                    <InputGroup >
-                                      <InputGroupAddon addonType="prepend">Aprox. Weight (each)</InputGroupAddon>
-                                      <Input type="text"
+
+                        <Form id="deliveryRequestForm">
+                          
+                          <FormGroup row className="mt-3">
+                            <Col sm={12}>
+                              <InputGroup >
+                                <InputGroupAddon addonType="prepend">Amount</InputGroupAddon>
+                                  <Input type="text" 
+                                    value={this.state.itemCount} 
+                                    onChange={this.handleInputChange}
+                                    name="itemCount"
+                                />
+                              </InputGroup>
+                              {errors.itemCount.length > 0 && <span className="error">{errors.itemCount}</span>}
+                            </Col>
+                          </FormGroup>
+                          
+                          <FormGroup row>
+                              <Col sm={12}>
+                                <InputGroup >
+                                  <InputGroupAddon addonType="prepend">Description</InputGroupAddon>
+                                  <Input type="text" 
+                                         value={this.state.itemDesc} 
+                                         onChange={this.handleInputChange}
+                                         name="itemDesc"
+                                  />
+                                </InputGroup>
+                                {errors.itemDesc.length > 0 && <span className="error">{errors.itemDesc}</span>}
+                              </Col>
+                            </FormGroup>
+                          
+                            <FormGroup row>
+                              <Col sm={12}>
+                                <InputGroup >
+                                  <InputGroupAddon addonType="prepend">Aprox. Weight (each)</InputGroupAddon>
+                                  <Input type="text"
                                             value={this.state.itemWeight}
                                             name="itemWeight"
                                             onChange={this.handleInputChange}
-                                      />
-                                      <InputGroupAddon addonType="append">
-                                        <AppDropdown items={['lbs','kg', 'gm', 'oz','lt']} parentCallback={ this.setUnitOfMeasure }/>
-                                      </InputGroupAddon>
-                                    </InputGroup>
-                                    {errors.itemWeight.length > 0 && <span className="error">{errors.itemWeight}</span>}
-                                  </Col>
-                                </FormGroup>
-                                <Button 
-                                  color="primary"
-                                  type="submit" 
-                                  onClick={(event) => this.submitDeliveryRequest(event)}>Submit Request</Button>
-                              </Form>
+                                  />
+                                  <InputGroupAddon addonType="append">
+                                    <AppDropdown items={['lbs','kg', 'gm', 'oz','lt']} parentCallback={ this.setUnitOfMeasure }/>
+                                  </InputGroupAddon>
+                                </InputGroup>
+                                {errors.itemWeight.length > 0 && <span className="error">{errors.itemWeight}</span>}
                               </Col>
-                              </Row>
+                            </FormGroup>
+                            <Button color="primary" type="submit"  onClick={(event) => this.submitDeliveryRequest(event)}>Submit Request</Button>
+                          </Form>
+
                       <this.DeliveryRequestDialog />
                       <this.DeliveryOfferDialog />
                       </div>
