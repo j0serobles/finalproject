@@ -352,7 +352,7 @@ class Delivery extends React.Component {
                           </Col>
                         </Row>
 
-                        <Form id="deliveryRequestForm">
+                        <Form id="deliveryRequestForm" onSubmit={  (event) => this.submitDeliveryRequest(event) }>
                           
                           <FormGroup row className="mt-3">
                             <Col sm={12}>
@@ -398,7 +398,7 @@ class Delivery extends React.Component {
                                 {errors.itemWeight.length > 0 && <span className="error">{errors.itemWeight}</span>}
                               </Col>
                             </FormGroup>
-                            <Button color="primary" type="submit"  onClick={(event) => this.submitDeliveryRequest(event)}>Submit Request</Button>
+                            <Button color="primary" type="submit"  onClick={ (event) => this.submitDeliveryRequest(event) }>Submit Request</Button>
                           </Form>
 
                       <this.DeliveryRequestDialog />
