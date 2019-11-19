@@ -1,19 +1,10 @@
-#loginButton { 
-    margin-right: 10px!important;
-}
-
-#login-link, #regButton {
+#login-link, #logout-link, #reg-link {
     margin-right: 10px;
     margin-top: 5px;
-}
-
-#logoutButton {
-    float: right;
-    margin-top: 5px;
+    float:right;
 }
 
 #user-name {
-    
-    padding-top : 15px;
+    padding-top : 20px;
     float:left;
 }

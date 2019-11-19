@@ -146,7 +146,7 @@ return(
     { props.auth.isAuthenticated  && (
     <div>
       <div id="user-name" className="small" >Logged in as: {userName}</div>
-      <NavLink
+      <NavLink id="logout-link"
         to="/logout"
         className="nav-link">
         <button  id="logoutButton" className="btn btn-outline-success my-2 my-sm-0 ml-3 " type="submit">Log Out</button>
@@ -160,7 +160,7 @@ return(
         <NavLink id="login-link" to="/login">
           <button id="loginButton" className="btn btn-outline-success my-2 my-sm-0" type="submit">Login</button>
         </NavLink>
-        <NavLink to="/register">
+        <NavLink  id="reg-link" to="/register">
           <button  id="regButton" className="btn btn-outline-success my-2 my-sm-0" type="submit">Register</button>
         </NavLink>
         </div>)
