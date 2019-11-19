@@ -47,7 +47,7 @@ class Landing extends Component {
           <div className="card-body">
             <h5 className="card-title" id="lastMile">Last Mile Delivery </h5>
             <p className="card-text">Our Last Mile Delivery service takes away your stress of dealing with excuses and failed attempts by other companies.  We’ll pick up your shipment anywhere in the Central Florida market and have to you in time and on time. No excuses and no more stress!</p>
-            <a href="#" className="btn btn-primary">Get a Quote</a>
+            <a href="/delivery" className="btn btn-primary">Get a Quote</a>
           </div>
         </div>
       </div>
@@ -59,7 +59,7 @@ class Landing extends Component {
             <h5 className="card-title" id="sameDayRetail">Same Day Retail</h5>
                           <p class="card-text">When you’re busy shopping at the mall or online at your favorite store and have something you need delivered to your hotel, your agent at the airport or simply to a friend or family member. We’ll pick it up at the retail store and deliver it no questions asked. We’ll get it to where you need it! </p>
             <p className="card-text"></p>
-            <a href="#" className="btn btn-primary">Get a Quote</a>
+            <a href="/delivery" className="btn btn-primary">Get a Quote</a>
           </div>
         </div>
       </div>
@@ -70,7 +70,7 @@ class Landing extends Component {
           <div className="card-body">
             <h5 className="card-title" id="conventionServices">Convention Services</h5>
             <p className="card-text">Our Brand New “Convention Services” delivery can save the day. When you need that special item or missing piece of your booth, marketing materials, or whatever is needed to save your tradeshow - you can count on us to save the day. We know the business, the locations and how to get in and out in no time flat! </p>
-            <a href="#" className="btn btn-primary">Get a Quote</a>
+            <a href="/delivery" className="btn btn-primary">Get a Quote</a>
           </div>
         </div>
       </div>
