@@ -121,6 +121,8 @@ class DeliveryList extends Component {
     
     render() {
 
+      //console.log ("DeliveryList[124]: " , this.props); 
+
         let deliveryList;
         let deliveryListItems;
        

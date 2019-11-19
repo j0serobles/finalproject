@@ -10,7 +10,8 @@
         rgba(255, 255, 255, 0.0)
       ),
       url("./Same_Day_Delivery.jpg");
-    background-size: cover;
+    background-size: 100%;
+    background-repeat: no-repeat;
     min-height: 60vh;
     position: relative;
   }
@@ -20,6 +21,6 @@
   }
 
 
-  .container {
+  .container, .jumbotron {
     background-color: transparent!important;
   }

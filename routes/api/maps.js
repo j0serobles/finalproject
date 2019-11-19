@@ -17,6 +17,18 @@ router.post('/distance', (req, res) => {
         const destinations = [destLocation];
         distance.key(googleKey);
         distance.units('imperial'); 
+
+        const computeCost = (distance) => {
+
+            // Estiamted cost = (min cost) + (variable amount)
+            //Min cost = 50
+            // If computed cost < min cost then return min cost
+            // IF computed cost > min then return computed cost
+            const minCost      = 50;
+            const computedCost = ( parseFloat(distance) * 3) > minCost ? parseFloat(distance) * 3 
+            : minCost; 
+            return (computedCost); 
+        }
   
     distance.matrix(origins, destinations, function (err, distances) {
         if (err) {
@@ -36,7 +48,7 @@ router.post('/distance', (req, res) => {
                         let duration = distances.rows[i].elements[j].duration.text;
                         let results = { distance : parseInt(distance.replace(/\,/g,'')), 
                                          duration : duration, 
-                                         cost     : parseInt(distance) * .90
+                                         cost     : parseInt(computeCost(distance))
                                       };
                        
                         console.log('Distance from ' + origin + ' to ' + destination + ' is ' + distance + ' and should take aprox. ' + duration);
