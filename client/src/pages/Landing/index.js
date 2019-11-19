@@ -8,19 +8,15 @@ class Landing extends Component {
   render() {
     return (
   <div>
-  <div className="jumbotron jumbotron-fluid" id="main">
-    <div className="container">
-      <br></br><br></br>
+    <div id="main">
+    <div className="container" id="splash"></div>
       <div className="row">
-        {/* <div className="col-sm-7">     
-        </div> */}
-        <div className="col-sm-5 offset-sm-8 text-center" id="col-4">
-          <br></br><br></br><br></br><br></br><br></br><br></br>
-          <a className="btn btn-primary btn-success" href="/delivery" role="button">Get a Quote</a>
+        <div className="col-sm-4 offset-sm-7 text-center" id="col-4">
+          <a className="btn btn-primary btn-success btn-block btn-lg" href="/delivery" role="button">Get a Quote</a>
         </div>
+      </div>
       </div>    
-    </div>
-  </div>
+
   <br></br><br></br>
 
   <div className="container">

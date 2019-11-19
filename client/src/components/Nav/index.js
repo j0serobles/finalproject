@@ -68,8 +68,7 @@ return(
 <div> 
   <nav className="navbar navbar-expand-lg navbar-light bg-light">
 
-  <NavLink to="/home" className="nav-link">DELIVER IT TODAY</NavLink> 
-  {/* <a className="navbar-brand" href="#"></a> */}
+  <NavLink to="/home" className="nav-link" id="brand-text"><strong>DELIVER IT TODAY</strong></NavLink> 
   
   <NavbarToggler onClick={toggleNavbar} className="mr-2" />
     <Collapse isOpen={!collapsed} navbar>
