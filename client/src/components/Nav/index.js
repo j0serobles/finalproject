@@ -81,46 +81,14 @@ return(
             
   {/* <div className="collapse navbar-collapse" id="navbarSupportedContent"> */}
 
-    <ul className="navbar-nav mr-auto">
-
-      <li className="nav-item active">
-      <NavLink
-        to="/about"
-        className="nav-link">About Us
-      </NavLink>
-      </li>
-
-      <li className="nav-item active">
-      <NavLink
-        to="/contact"
-        className="nav-link">Contact Us
-      </NavLink>
-      </li>
-
-      { props.auth.isAuthenticated  && (
-      <li className="nav-item">
-          <NavLink
-            to="/delivery"
-            className="nav-link">
-            New Delivery
-          </NavLink>
-      </li>
-      )}
-
-      { props.auth.isAuthenticated  && (
-     <li className="nav-item">
-          <NavLink
-            to="/deliveries"
-            className="nav-link">
-            Delivery List
-          </NavLink>
-      </li>
-      )}
+    <ul className="navbar-nav mr-auto mx-auto">
 
 
 
-          <Dropdown nav isOpen={dropdownOpen} toggle={toggle}>
-            <DropdownToggle nav caret>
+
+
+          <Dropdown  nav isOpen={dropdownOpen} toggle={toggle}>
+            <DropdownToggle nav caret id="serv-dropdown">
               Services
             </DropdownToggle>
             <DropdownMenu>
@@ -135,6 +103,43 @@ return(
               </DropdownItem>
             </DropdownMenu>
         </Dropdown>
+
+
+        { props.auth.isAuthenticated  && (
+      <li className="nav-item active">
+          <NavLink
+            to="/delivery"
+            className="nav-link">
+            New Delivery
+          </NavLink>
+      </li>
+      )}
+
+      { props.auth.isAuthenticated  && (
+     <li className="nav-item active">
+          <NavLink
+            to="/deliveries"
+            className="nav-link">
+            Delivery List
+          </NavLink>
+      </li>
+      )}
+
+      
+<li className="nav-item active">
+      <NavLink
+        to="/about"
+        className="nav-link">About Us
+      </NavLink>
+      </li>
+
+      <li className="nav-item active">
+      <NavLink
+        to="/contact"
+        className="nav-link">Contact Us
+      </NavLink>
+      </li>
+
   
 
       

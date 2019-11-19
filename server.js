@@ -81,5 +81,7 @@ app.get("*", (req, res) => {
 
 //Call listen() on the server, not the app
 http.listen(port, () => {
-    console.log(`Server is listening at http://localhost:${port}`);
+    const server_address = http.address(); 
+    console.log(JSON.stringify(http.address(), '', 2)); 
+    console.log(`Server is listening at http://${server_address}:${port}`);
 });

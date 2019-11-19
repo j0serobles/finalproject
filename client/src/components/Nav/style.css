@@ -8,3 +8,8 @@
     padding-top : 20px;
     float:left;
 }
+
+
+#serv-dropdown {
+    background-color: transparent!important;
+}

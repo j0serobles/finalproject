@@ -24,7 +24,7 @@ class StatMap extends React.Component {
         googleMapURL: this.props.gMapsURL,
         loadingElement: <div style={{ height: `350px` }} />,
         containerElement: <div style={{ width: `100%` }} />,
-        mapElement: <div style={{height: `350px`, border : `1px solid` }}  />,
+        mapElement: <div style={{height: `350px`, border:`1px solid #ced4da` }}  />,
       }),
       withScriptjs,
       withGoogleMap,
@@ -48,7 +48,7 @@ class StatMap extends React.Component {
         }
       })
     )(props =>
-      <GoogleMap >
+      <GoogleMap options={{ mapTypeControl:false, streetViewControl:false}} >
         {props.directions && <DirectionsRenderer directions={props.directions} suppressMarkers={props.markers}/>}
       </GoogleMap>
     );

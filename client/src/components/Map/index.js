@@ -3,6 +3,7 @@ import { withGoogleMap, GoogleMap, withScriptjs, InfoWindow, Marker } from "reac
 import Autocomplete from 'react-google-autocomplete';
 import Geocode from "react-geocode";
 import DirectionRendererComponent from '../DirectionRendererComponent'; 
+import './style.css';
 
 let googleMapsKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
 let googleMapsURL = "https://maps.googleapis.com/maps/api/js?key=" + googleMapsKey + "&libraries=geometry,drawing,places";
@@ -414,6 +415,7 @@ const AsyncMap = withScriptjs(
       <GoogleMap google={this.props.google}
           defaultZoom={this.props.zoom}
           defaultCenter={{ lat: this.state.mapPosition.lat, lng: this.state.mapPosition.lng }}
+          options={{ mapTypeControl:false, streetViewControl:false}}
       >
       {/* Origin Marker -- Visible when pick-up address is known */}
       {  this.state.origMarkerPosition.lat && 
@@ -540,7 +542,7 @@ let map;
        <div style={{ height: this.props.height }} />
        }
        mapElement={
-       <div style={{ height: `100%` }} />
+       <div style={{ height: `100%`, border:`1px solid #ced4da` }} />
        }
     />
     

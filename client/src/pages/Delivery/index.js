@@ -110,8 +110,9 @@ class Delivery extends React.Component {
 
 
   onCancelDelivery = (message) => {
-    console.log ("onCancelDelivery[111]", message); 
-    this.props.cancelDelivery(this.state.deliveryId) 
+    console.log ("onCancelDelivery[113]", message); 
+    this.props.cancelDelivery(this.state.deliveryId);
+    this.socket.emit('request-changed'); 
     this.showDeliveryRequestDialog(false);
     this.showDeliveryOfferDialog(false);
     this.setState( { statusMessage: message , currentDelivery : null });
