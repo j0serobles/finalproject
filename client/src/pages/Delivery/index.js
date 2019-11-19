@@ -150,12 +150,13 @@ class Delivery extends React.Component {
   /* Opens a dialog informing user that app is looking for available drivers */
   submitDeliveryRequest = function(event) {
     event.preventDefault();
+    if (this.validateForm(this.state.errors)) { 
     //Compute distance and time between locations under current driving conditions.
     let coords = { origLoc : this.state.origLocation, destLoc: this.state.destLocation };
     axios.post ("/api/maps/distance", coords)
       .then ((res) => {
         console.log("Results from /distance: " ,JSON.stringify(res)); 
-        if (this.validateForm(this.state.errors)) { 
+
           this.setState( { showDeliveryRequestDialog : true} ,
           () => {
             let newDelivery = {
@@ -203,10 +204,11 @@ class Delivery extends React.Component {
             })
             .catch( error => console.log (error) ) ; 
             });
-          }//end if
+
       })
       .catch( (errors)  => console.log ( errors ));
-    } //end function
+    }//end if
+  } //end function
 
   validateForm = errorsObject => {
       let valid = true;

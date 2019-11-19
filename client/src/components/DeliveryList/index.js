@@ -63,6 +63,18 @@ class DeliveryList extends Component {
         this.props.setDataLoading(false); 
     }
 
+    getStatusString = (statusCode) => { 
+      //console.log("GetStatusString[67]", statusCode); 
+      switch ( statusCode ) {
+        case 'P' : return 'Pending';
+        case 'C' : return 'Accepted';
+        case 'I' : return 'In Progress';
+        case 'D' : return 'Delivered'; 
+        case 'X' : return 'Cancelled'; 
+        default : return statusCode;
+      }
+    }
+
 
     DeliveryInfoDialog = (props) => {  
       console.log ("DeliveryInfoDialog() called state.isModalOpen=" + this.props.isModalOpen);
@@ -107,7 +119,9 @@ class DeliveryList extends Component {
       //When Reject response is received, remove the spinner and set status message.
       socket.on(`${delivery._id}-rejected`, (msg) => { 
         console.log('DeliveryList[109] : ', msg); 
-        this.state.currentDelivery.status = 'X';
+        const currentDeliveryObj = { ...this.state.currentDelivery };
+        currentDeliveryObj.status = 'X'; 
+        this.setState( { currentDeliveryObj });
         this.props.hideSpinner(); 
         this.props.setStatusMessage("Offer was not accepted.");
       });
@@ -137,7 +151,7 @@ class DeliveryList extends Component {
                       <strong>Pick up at :</strong>         {delivery.origAddress}<br></br>
                       <strong>Deliver to :</strong>         {delivery.destAddress}<br></br>
                       <strong>Item(s) Description:</strong> {delivery.itemDescription}, weighting about {delivery.itemWeight}{delivery.itemWeightUnits}. <br></br>
-                      <strong>Current status:</strong> {delivery.status}         
+                      <strong>Current status:</strong> { this.getStatusString(delivery.status) }         
                     </Col>
                     <Col sm={2}>
                      <Button color="primary" className="align-middle mt-3" onClick={ () => this.handleButtonClick(delivery) }>Open</Button>
@@ -222,6 +236,7 @@ class DeliveryList extends Component {
   }
 
 DeliveryList.propTypes = { 
+    setListFilter   : PropTypes.func.isRequired,
     fetchDeliveries : PropTypes.func.isRequired, 
     deliveries      : PropTypes.array.isRequired,
     filterValue     : PropTypes.string, 
@@ -241,11 +256,5 @@ const mapStateToProps = state => ( {
 
 });
 
-export default connect (mapStateToProps, 
-  { fetchDeliveries, 
-    setListFilter, 
-    setDataLoading, 
-    toggleModal,
-    showSpinner,
-    hideSpinner,
-    setStatusMessage })(DeliveryList);
+export default connect (mapStateToProps, { fetchDeliveries,setListFilter,setDataLoading,toggleModal,showSpinner,hideSpinner,setStatusMessage,
+  })(DeliveryList);
