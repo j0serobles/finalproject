@@ -8,7 +8,9 @@ import { Dropdown,
   DropdownItem, 
   Button, 
   Row,
-  Col } from 'reactstrap';
+  Col,
+  NavbarToggler,
+  Collapse } from 'reactstrap';
 
 import './style.css';
 
@@ -54,6 +56,9 @@ function Nav(props) {
   // );
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [collapsed, setCollapsed]       = useState(true);
+
+  const toggleNavbar = () => setCollapsed(!collapsed);
   const toggle = () => setDropdownOpen(!dropdownOpen);
 
   console.log (props);
@@ -63,18 +68,19 @@ return(
 <div> 
   <nav className="navbar navbar-expand-lg navbar-light bg-light">
 
-  <NavLink to="/home" className="nav-link">
-        DELIVER IT TODAY
-    </NavLink> 
+  <NavLink to="/home" className="nav-link">DELIVER IT TODAY</NavLink> 
   {/* <a className="navbar-brand" href="#"></a> */}
   
-  
-  <button className="navbar-toggler" type="button" data-toggle="collapse" 
+  <NavbarToggler onClick={toggleNavbar} className="mr-2" />
+    <Collapse isOpen={!collapsed} navbar>
+
+  {/* <button className="navbar-toggler" type="button" data-toggle="collapse" 
     data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span className="navbar-toggler-icon"></span>
-  </button>
+  </button> */}
             
-  <div className="collapse navbar-collapse" id="navbarSupportedContent">
+  {/* <div className="collapse navbar-collapse" id="navbarSupportedContent"> */}
+
     <ul className="navbar-nav mr-auto">
 
       <li className="nav-item active">
@@ -135,14 +141,15 @@ return(
 
     </ul>
 
+
      
     { props.auth.isAuthenticated  && (
     <div>
       <div id="user-name" className="small" >Logged in as: {userName}</div>
-      <NavLink id="logoutButton"
+      <NavLink
         to="/logout"
         className="nav-link">
-        <button  className="btn btn-outline-success my-2 my-sm-0 ml-3 " type="submit">Log Out</button>
+        <button  id="logoutButton" className="btn btn-outline-success my-2 my-sm-0 ml-3 " type="submit">Log Out</button>
       </NavLink>
     </div>
     )
@@ -154,14 +161,14 @@ return(
           <button id="loginButton" className="btn btn-outline-success my-2 my-sm-0" type="submit">Login</button>
         </NavLink>
         <NavLink to="/register">
-          <button className="btn btn-outline-success my-2 my-sm-0" type="submit">Register</button>
+          <button  id="regButton" className="btn btn-outline-success my-2 my-sm-0" type="submit">Register</button>
         </NavLink>
         </div>)
      }
 
-  </div>
-</nav>
+     </Collapse>
 
+  </nav>
 </div>
 );
 

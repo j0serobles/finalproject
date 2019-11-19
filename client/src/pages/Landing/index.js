@@ -12,11 +12,11 @@ class Landing extends Component {
     <div className="container">
       <br></br><br></br>
       <div className="row">
-        <div className="col-sm-7">     
-        </div>
-        <div className="col-sm-5 text-center" id="col-4">
+        {/* <div className="col-sm-7">     
+        </div> */}
+        <div className="col-sm-5 offset-sm-8 text-center" id="col-4">
           <br></br><br></br><br></br><br></br><br></br><br></br>
-          <a className="btn btn-primary btn-success" href="#" role="button">Get a Quote</a>
+          <a className="btn btn-primary btn-success" href="/delivery" role="button">Get a Quote</a>
         </div>
       </div>    
     </div>
