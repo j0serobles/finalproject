@@ -4,8 +4,6 @@ import Autocomplete from 'react-google-autocomplete';
 import Geocode from "react-geocode";
 import DirectionRendererComponent from '../DirectionRendererComponent'; 
 
-import mapUtils  from '../../utility/mapUtils';
-
 let googleMapsKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
 let googleMapsURL = "https://maps.googleapis.com/maps/api/js?key=" + googleMapsKey + "&libraries=geometry,drawing,places";
 
@@ -246,7 +244,6 @@ class Map extends Component {
      origPlaceId : ( origPlaceId ) ? origPlaceId : ''
     },  () => { 
       console.log ("onOrigPlaceSelected[243]" + JSON.stringify(this.state)) 
-      mapUtils.computeDistanceTime( this.state.origPlaceId, this.state.destPlaceId );
       this.props.handleAddressChange('origAddress', this.state.origAddress.address );
       this.props.onOrigLocationIDChange(this.state.origPlaceId);
       this.props.onOrigLocationChange(this.state.origMarkerPosition);
@@ -426,7 +423,7 @@ const AsyncMap = withScriptjs(
         draggable={true}
         onDragEnd={ this.onOrigMarkerDragEnd }
         position={{ lat: this.state.origMarkerPosition.lat, lng: this.state.origMarkerPosition.lng }} 
-        icon="http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
+        icon="https://maps.google.com/mapfiles/ms/icons/blue-dot.png"
       />
       }
 
@@ -438,6 +435,7 @@ const AsyncMap = withScriptjs(
         draggable={true}
         onDragEnd={ this.onDestMarkerDragEnd }
         position={{ lat: this.state.destMarkerPosition.lat, lng: this.state.destMarkerPosition.lng }}
+        icon="https://maps.google.com/mapfiles/ms/icons/red-dot.png"
       />
       }
 

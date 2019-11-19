@@ -3,21 +3,6 @@ import "./style.css";
 import guyImage from "./Guy_Delivering_Pkg.jpg";
 import eventImage from "./Event_Services_Hall.png";
 import womanImage from "./Woman_With_Lots_of_Bags.jpg";
-import { Link } from "react-router-dom";
-import  {
-    Collapse,
-    Navbar,
-    NavbarToggler,
-    NavbarBrand,
-    Nav,
-    NavItem,
-    NavLink,
-    Container,
-    Row,
-    Col,
-    Jumbotron,
-    Button
-} from 'reactstrap';
 
 class Landing extends Component {
   render() {
@@ -25,14 +10,13 @@ class Landing extends Component {
   <div>
   <div className="jumbotron jumbotron-fluid" id="main">
     <div className="container">
-      {/* <h1 className="display-4">MERN BABY BERN</h1> */}
-      {/* <p className="lead">This is where we'll have our slogan / maybe "Get a quote" button and background.</p> */}
       <br></br><br></br>
       <div className="row">
-        <div className="col-sm-7">     
-        </div>
-        <div className="col-sm-5 text-center" id="col-4">
-          <a className="btn btn-primary btn-success" href="#" role="button">Get a Quote</a>
+        {/* <div className="col-sm-7">     
+        </div> */}
+        <div className="col-sm-5 offset-sm-8 text-center" id="col-4">
+          <br></br><br></br><br></br><br></br><br></br><br></br>
+          <a className="btn btn-primary btn-success" href="/delivery" role="button">Get a Quote</a>
         </div>
       </div>    
     </div>
@@ -42,7 +26,7 @@ class Landing extends Component {
   <div className="container">
     <div className="row">
       <div className="col-sm">               
-        <div className="card" style={{"width": "18rem;"}} >
+        <div className="card" style={{"width": "18rem"}} >
           <a href="#"><img src={guyImage} className="card-img-top" alt="..."></img></a>
           <div className="card-body">
             <h5 className="card-title" id="lastMile">Last Mile Delivery </h5>
@@ -57,7 +41,7 @@ class Landing extends Component {
           <a href="#"><img src={womanImage} className="card-img-top" alt="..."></img></a>
           <div className="card-body">
             <h5 className="card-title" id="sameDayRetail">Same Day Retail</h5>
-                          <p class="card-text">When you’re busy shopping at the mall or online at your favorite store and have something you need delivered to your hotel, your agent at the airport or simply to a friend or family member. We’ll pick it up at the retail store and deliver it no questions asked. We’ll get it to where you need it! </p>
+                          <p className="card-text">When you’re busy shopping at the mall or online at your favorite store and have something you need delivered to your hotel, your agent at the airport or simply to a friend or family member. We’ll pick it up at the retail store and deliver it no questions asked. We’ll get it to where you need it! </p>
             <p className="card-text"></p>
             <a href="/delivery" className="btn btn-primary">Get a Quote</a>
           </div>
@@ -65,7 +49,7 @@ class Landing extends Component {
       </div>
       
       <div className="col-sm">
-        <div className="card" style={{"width": "18rem;"}}>
+        <div className="card" style={{"width": "18rem"}}>
           <a href="#"><img src={eventImage} className="card-img-top" alt="..."></img></a>
           <div className="card-body">
             <h5 className="card-title" id="conventionServices">Convention Services</h5>

@@ -13,6 +13,7 @@ import Landing      from './pages/Landing';
 import Delivery     from './pages/Delivery';
 import DeliveryList from './components/DeliveryList';
 import About        from './pages/About';
+import Contact      from './pages/Contact';
 import Search       from './pages/Search';
 import Register     from "./components/auth/Register";
 import Login        from "./components/auth/Login";
@@ -45,6 +46,7 @@ function App() {
             <Route exact path="/about"      component={About}    />
             <Route exact path="/search"     component={Search}   />
             <Route exact path="/register"   component={Register} />
+            <Route exact path="/contact"   component={Contact} />
             <Route exact path="/login"      component={Login}    /> 
             <Route exact path="/logout"     render={ () => { store.dispatch(logoutUser()); window.location.href = "./login" } } />
             <Route exact path="/"           component={Landing}  />

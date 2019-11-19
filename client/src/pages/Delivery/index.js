@@ -62,7 +62,9 @@ class Delivery extends React.Component {
     },
     showDeliveryOfferDialog    : false,
     showDeliveryRequestDialog  : false, 
-    statusMessage              : ''
+    statusMessage              : '',
+    estimatedDuration          : 0,
+    totalCost                  : 0
   }
 
 }
@@ -112,9 +114,13 @@ class Delivery extends React.Component {
     this.props.cancelDelivery(this.state.deliveryId) 
     this.showDeliveryRequestDialog(false);
     this.showDeliveryOfferDialog(false);
-    this.setState( { statusMessage: message });
+    this.setState( { statusMessage: message , currentDelivery : null });
     //Clear the message automatically after 10 seconds.
-    setTimeout ( () => this.setState ( { statusMessage : '' } ), 10000);
+    setTimeout ( () => this.setState ({ 
+      statusMessage     : '',
+      estimatedDuration : 0,
+      totalCost         : 0 
+    }), 10000);
   }
 
 
@@ -122,7 +128,7 @@ class Delivery extends React.Component {
   DeliveryOfferDialog = (msg) => { 
     const dialogMessage = `We can deliver ${this.state.itemCount} ${this.state.itemDesc} ` +
           ` from address ${this.state.origAddress} to ${this.state.destAddress}.  `        + 
-          ` in about ${this.state.duration}, for $ ${this.state.cost}`;
+          ` in about ${this.state.estimatedDuration }, for $ ${this.state.totalCost.toFixed(2)}`;
     if (this.state.showDeliveryOfferDialog) { 
       return (<AppModal modalState={this.state.showDeliveryOfferDialog} toggle={this.toggleDeliveryOfferDialog}>
                 <ModalHeader toggle={this.toggleDeliveryOfferDialog}>
@@ -143,53 +149,63 @@ class Delivery extends React.Component {
   /* Opens a dialog informing user that app is looking for available drivers */
   submitDeliveryRequest = function(event) {
     event.preventDefault();
-    if (this.validateForm(this.state.errors)) { 
-      this.setState( { showDeliveryRequestDialog : true} ,
-       () => {
-        let newDelivery = {
-              "origAddress"       : this.state.origAddress,
-              "destAddress"       : this.state.destAddress,
-              "origLocation"      : this.state.origLocation,
-              "origLocationID"    : this.state.origLocationID,
-              "destLocation"      : this.state.destLocation, 
-              "destLocationID"    : this.state.destLocationID, 
-              "status"            : "P", 
-              "itemDescription"   : this.state.itemDesc,
-              "itemWeight"        : this.state.itemWeight,
-              "itemWeightUnits"   : this.state.itemWeightUnits,
-              "itemVolume"        : null, 
-              "itemVolUnits"      : '',
-              "totalCost"         : "0",
-              "estimatedDuration" : "0", 
-              "actualDuration"    : "0",
-              "customer"          : "5dae4e815d63d136b0eebfa4"
-        }; 
-        console.log ('Delivery[149]', JSON.stringify(newDelivery, '', 2)); 
-        axios.post('/api/delivery', newDelivery)
-        .then( (res) => { 
-          this.setState( { deliveryId : res.data._id } , console.log ('New delivery request saved.', res.data) ) ;
-          this.props.setCurrentDelivery(res.data); 
-          return (res);
-         }) 
-        .then(  (res) => { 
-          //Signal server that a new delivery request has been created:
-          console.log(`Delivery[157]: Before socket.on ${res.data._id}`);
-          this.socket.emit('new-request-created');
-          //Connect to socket and wait for a response msg with an offer
-          console.log(`Delivery[160]: Before socket.on ${res.data._id}`);
-          this.socket.on(`${res.data._id}`, (msg) => {
-            console.log ('delivery-offer received.', msg);
-            this.setState( { showDeliveryRequestDialog : false,
-                             showDeliveryOfferDialog   : true 
-                           }
-                         );
-           });
-           console.log(`Delivery[168]: After socket.on ${res.data._id}`);
-        })
-        .catch( error => console.log (error) ) ; 
-        });
-      } 
-    }
+    //Compute distance and time between locations under current driving conditions.
+    let coords = { origLoc : this.state.origLocation, destLoc: this.state.destLocation };
+    axios.post ("/api/maps/distance", coords)
+      .then ((res) => {
+        console.log("Results from /distance: " ,JSON.stringify(res)); 
+        if (this.validateForm(this.state.errors)) { 
+          this.setState( { showDeliveryRequestDialog : true} ,
+          () => {
+            let newDelivery = {
+                  "origAddress"       : this.state.origAddress,
+                  "destAddress"       : this.state.destAddress,
+                  "origLocation"      : this.state.origLocation,
+                  "origLocationID"    : this.state.origLocationID,
+                  "destLocation"      : this.state.destLocation, 
+                  "destLocationID"    : this.state.destLocationID, 
+                  "status"            : "P", 
+                  "itemDescription"   : this.state.itemDesc,
+                  "itemWeight"        : this.state.itemWeight,
+                  "itemWeightUnits"   : this.state.itemWeightUnits,
+                  "itemVolume"        : null, 
+                  "itemVolUnits"      : '',
+                  "totalCost"         : parseFloat(res.data.cost),
+                  "estimatedDuration" : res.data.duration,
+                  "distance"          : parseFloat(res.data.distance), 
+                  "actualDuration"    : "0",
+                  "customer"          : "5dae4e815d63d136b0eebfa4"
+            }; 
+            console.log ('Delivery[172]', JSON.stringify(newDelivery, '', 2)); 
+            axios.post('/api/delivery', newDelivery)
+            .then( (res) => { 
+              this.setState( { deliveryId : res.data._id, 
+                               estimatedDuration : res.data.estimatedDuration,
+                               totalCost : res.data.totalCost }, console.log ('New delivery request saved.', res.data) ) ;
+              this.props.setCurrentDelivery(res.data); 
+              return (res);
+            }) 
+            .then(  (res) => { 
+              //Signal server that a new delivery request has been created:
+              console.log(`Delivery[157]: Before socket.on ${res.data._id}`);
+              this.socket.emit('new-request-created');
+              //Connect to socket and wait for a response msg with an offer
+              console.log(`Delivery[160]: Before socket.on ${res.data._id}`);
+              this.socket.on(`${res.data._id}`, (msg) => {
+                console.log ('delivery-offer received.', msg);
+                this.setState( { showDeliveryRequestDialog : false,
+                                showDeliveryOfferDialog   : true 
+                              }
+                            );
+              });
+              console.log(`Delivery[168]: After socket.on ${res.data._id}`);
+            })
+            .catch( error => console.log (error) ) ; 
+            });
+          }//end if
+      })
+      .catch( (errors)  => console.log ( errors ));
+    } //end function
 
   validateForm = errorsObject => {
       let valid = true;
@@ -335,54 +351,56 @@ class Delivery extends React.Component {
                             />
                           </Col>
                         </Row>
-                        <Row id="deliveryRequestForm">
-                         <Col sm={12}>
-                            <Form>
-                                <FormGroup row>
-                                  <Col>
-                                    <InputGroup >
-                                      <InputGroupAddon addonType="prepend">Amount</InputGroupAddon>
-                                      <Input type="text" 
-                                            value={this.state.itemCount} 
-                                            onChange={this.handleInputChange}
-                                            name="itemCount"
-                                            />
-                                    </InputGroup>
-                                    {errors.itemCount.length > 0 && <span className="error">{errors.itemCount}</span>}
-                                  </Col>
-                                  <Col>
-                                  <InputGroup >
-                                    <InputGroupAddon addonType="prepend">Description</InputGroupAddon>
-                                    <Input type="text" 
-                                           value={this.state.itemDesc} 
-                                           onChange={this.handleInputChange}
-                                           name="itemDesc"
-                                    />
-                                    </InputGroup>
-                                    {errors.itemDesc.length > 0 && <span className="error">{errors.itemDesc}</span>}
-                                  </Col>
-                                  <Col>
-                                    <InputGroup >
-                                      <InputGroupAddon addonType="prepend">Aprox. Weight (each)</InputGroupAddon>
-                                      <Input type="text"
+
+                        <Form id="deliveryRequestForm" onSubmit={  (event) => this.submitDeliveryRequest(event) }>
+                          
+                          <FormGroup row className="mt-3">
+                            <Col sm={12}>
+                              <InputGroup >
+                                <InputGroupAddon addonType="prepend">Amount</InputGroupAddon>
+                                  <Input type="text" 
+                                    value={this.state.itemCount} 
+                                    onChange={this.handleInputChange}
+                                    name="itemCount"
+                                />
+                              </InputGroup>
+                              {errors.itemCount.length > 0 && <span className="error">{errors.itemCount}</span>}
+                            </Col>
+                          </FormGroup>
+                          
+                          <FormGroup row>
+                              <Col sm={12}>
+                                <InputGroup >
+                                  <InputGroupAddon addonType="prepend">Description</InputGroupAddon>
+                                  <Input type="text" 
+                                         value={this.state.itemDesc} 
+                                         onChange={this.handleInputChange}
+                                         name="itemDesc"
+                                  />
+                                </InputGroup>
+                                {errors.itemDesc.length > 0 && <span className="error">{errors.itemDesc}</span>}
+                              </Col>
+                            </FormGroup>
+                          
+                            <FormGroup row>
+                              <Col sm={12}>
+                                <InputGroup >
+                                  <InputGroupAddon addonType="prepend">Aprox. Weight (each)</InputGroupAddon>
+                                  <Input type="text"
                                             value={this.state.itemWeight}
                                             name="itemWeight"
                                             onChange={this.handleInputChange}
-                                      />
-                                      <InputGroupAddon addonType="append">
-                                        <AppDropdown items={['lbs','kg', 'gm', 'oz','lt']} parentCallback={ this.setUnitOfMeasure }/>
-                                      </InputGroupAddon>
-                                    </InputGroup>
-                                    {errors.itemWeight.length > 0 && <span className="error">{errors.itemWeight}</span>}
-                                  </Col>
-                                </FormGroup>
-                                <Button 
-                                  color="primary"
-                                  type="submit" 
-                                  onClick={(event) => this.submitDeliveryRequest(event)}>Submit Request</Button>
-                              </Form>
+                                  />
+                                  <InputGroupAddon addonType="append">
+                                    <AppDropdown items={['lbs','kg', 'gm', 'oz','lt']} parentCallback={ this.setUnitOfMeasure }/>
+                                  </InputGroupAddon>
+                                </InputGroup>
+                                {errors.itemWeight.length > 0 && <span className="error">{errors.itemWeight}</span>}
                               </Col>
-                              </Row>
+                            </FormGroup>
+                            <Button color="primary" type="submit"  onClick={ (event) => this.submitDeliveryRequest(event) }>Submit Request</Button>
+                          </Form>
+
                       <this.DeliveryRequestDialog />
                       <this.DeliveryOfferDialog />
                       </div>

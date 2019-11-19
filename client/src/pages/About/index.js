@@ -8,7 +8,7 @@ class About extends React.Component {
         <div className="container">
 
 <div className="jumbotron text-center" id="jumbo">
-                <h1>Company name</h1> 
+                <h1>Deliver It Today</h1> 
                 <p>We specialize in Same Day Delivery</p>
                 <p>Delivering your goods where you need it and when you need it</p> 
                 <form className="form-inline">
@@ -22,9 +22,9 @@ class About extends React.Component {
               <div className="container-fluid">
                 <div className= "text-center">   
                     <div className="container-fluid bg-grey">
-                            <h2>Our Values</h2>
-                            <h4><strong>MISSION:</strong>Talk about the company and need for same day services</h4>      
-                            <p><strong>VISION:</strong>Our vision to ensure customer satisfaction every time</p>
+                    <h2>Our Values</h2>
+                      <h4><strong>MISSION:</strong>To ensure your satisfaction the first time and every time</h4>
+                      <p><strong>VISION:</strong>To add value and service above all else.</p>
                     </div>    
                     <br></br>
                     {/* <button className="btn btn-default btn-lg">Get in Touch</button> */}

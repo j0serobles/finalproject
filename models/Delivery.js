@@ -75,16 +75,20 @@ const DeliverySchema = new Schema({
         type: String,
         required : false
     },
+    distance : {
+        type : Number,
+        required: true
+    },
     totalCost : {
         type : Number,
         required: true
     },
     estimatedDuration : {
-        type : Number,
+        type : String,
         required: true
     },
     actualDuration : {
-        type : Number,
+        type : String,
         required: true
     },
     customer: { 
