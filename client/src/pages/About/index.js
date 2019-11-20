@@ -7,7 +7,7 @@ class About extends React.Component {
         return(
         <div className="container">
 
-<div className="jumbotron text-center" id="jumbo">
+<div className="jumbotron text-center" id="jumbo-about">
                 <h1>Deliver It Today</h1> 
                 <p>We specialize in Same Day Delivery</p>
                 <p>Delivering your goods where you need it and when you need it</p> 

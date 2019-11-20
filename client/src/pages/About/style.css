@@ -33,12 +33,14 @@ margin: 70px 0;
 .item span {
 font-style: normal;
 }
-#jumbo {
-  background-color: #f4511e;
-  color: #fff;
+
+#jumbo-about {
+background-color: #f4511e!important;
+color: #fff;
 padding-top: 5px;
 padding-bottom: 15px;
 }
+
 #headerReviews {
 margin-top: 5px;
 }

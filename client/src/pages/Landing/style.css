@@ -1,7 +1,7 @@
 #main {
     margin-top: 1px;
     margin-bottom: 0px;
-    height: 700px;
+    height: 300px;
     /* background-image: url("../images/Same_Day_Delivery.jpg"); */
 
     background-image: linear-gradient(
@@ -20,7 +20,6 @@
     margin-top: 40px;
     height: 40px;
   }
-
 
   .container, .jumbotron {
     background-color: transparent!important;
