@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const axios = require('axios'); 
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const keys = require('../../config/keys');
@@ -33,7 +34,24 @@ router.post('/register', (req, res) => {
                 if(err) throw err;
 
                 newUser.password = hash;
-                newUser.save().then(user => res.json(user)).catch(err => console.log(err));
+                newUser.save()
+                  .then( savedUser => {
+                    
+                    let newMessage = {
+                        addresses:  [savedUser.email],
+                        subject   : "Welcome to MERNBaby.com!",
+                        message   :  `A new user, named ${savedUser.name}, has been registered at MERNBaby.com.`
+                    }
+
+                    const port = process.env.PORT || 5000;
+                    const api_url = "http://localhost:" + port + "/api/mailer/sendmail" ;
+                    axios.post(api_url, newMessage)
+                      .then( response => res.json( savedUser) )
+                      .catch( err     => res.status(400).json(err));
+                  })
+                  .catch( err => {
+                      res.status(400).send("users.js[41]:Error saving:" + err);
+                  });
             });
         });
     });
